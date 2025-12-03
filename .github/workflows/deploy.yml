@@ -13,9 +13,15 @@ jobs:
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Pin to a recent 18.x that satisfies package engines (some deps require >=18.18)
+          node-version: '18.18.0'
+      - name: Show Node / NPM versions (diagnostic)
+        run: |
+          node -v
+          npm -v
       - name: Install dependencies
         run: |
+          # use npm ci for deterministic install; keep output for diagnosing failures
           npm ci
       - name: Build
         run: |
