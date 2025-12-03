@@ -140,6 +140,19 @@ document.addEventListener('DOMContentLoaded', () => {
 	initLanding();
 	initDarkMode();
 	initGameBackground();
+
+	// Register service worker for PWA offline support.
+	// Use absolute path to the repo base so it works on GitHub Pages.
+	try {
+		if ('serviceWorker' in navigator) {
+			// Register with repo base path; this file is copied from `public/sw.js` into `dist/sw.js`.
+			navigator.serviceWorker.register('/BlokusFocus/sw.js')
+				.then(reg => console.log('ServiceWorker registered:', reg.scope))
+				.catch(err => console.warn('ServiceWorker registration failed:', err));
+		}
+	} catch (e) {
+		console.warn('ServiceWorker registration error', e);
+	}
 	// Color burst effect on logo
 	if (document.querySelector('.logo')) {
 		window.colorBurstEffect = new ColorBurstEffect();
