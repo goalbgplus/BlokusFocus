@@ -10,11 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # fetch full history to allow some deploy actions to operate if needed
+          fetch-depth: 0
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           # Pin to a recent 18.x that satisfies package engines (some deps require >=18.18)
           node-version: '18.18.0'
+          cache: 'npm'
       - name: Show Node / NPM versions (diagnostic)
         run: |
           node -v
@@ -23,6 +27,12 @@ jobs:
         run: |
           # use npm ci for deterministic install; keep output for diagnosing failures
           npm ci
+      - name: Show `dist/` after build (diagnostic)
+        if: always()
+        run: |
+          echo "Dist exists:" && ls -la ./dist || echo "dist missing"
+          echo "--- index.html head ---"
+          if [ -f ./dist/index.html ]; then head -n 40 ./dist/index.html; fi
       - name: Build
         run: |
           npm run build
