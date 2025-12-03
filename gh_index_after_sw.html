@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="description" content="GOALBG - Addictive block puzzle game. Place pieces strategically, clear lines, and beat your high score on mobile and desktop.">
+    <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+    <meta name="color-scheme" content="dark light">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="GOALBG">
+    <link rel="apple-touch-icon" href="/BlokusFocus/icons/icon-192.png">
+    <title>GOALBG - Block Puzzle Challenge</title>
+    <link rel="icon" href="/BlokusFocus/assets/favicon-B_SY1GJM.ico" type="image/x-icon">
+    <!-- Version ID for tracking refreshes -->
+    <!-- ⚠️ IMPORTANT: Update version number in 5 places when making changes:
+         1. <meta name="app-version" content="vX.X"> (below)
+         2. All CSS preload links: css/xxx.css?v=X.X (line ~80)
+         3. All CSS noscript links: css/xxx.css?v=X.X (line ~89)
+         4. Defer CSS script: const VERSION='X.X' (line ~97)
+         5. Script src: js/app.js?v=X.X (line ~318)
+         This forces full cache busting so users see changes immediately!
+    -->
+    <meta name="app-version" content="v3.1">
+    <!-- Cache busting - forces browser to reload all assets -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+        <!-- Fonts & Icons - preload then apply (robust without JS) -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
+        <link rel="preload" as="style"
+            href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Poppins:wght@400;600;700&display=swap"
+            onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Poppins:wght@400;600;700&display=swap">
+        </noscript>
+
+        <link rel="preload" as="style"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css"
+            crossorigin="anonymous"
+            onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet"
+                href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.0/css/all.min.css"
+                crossorigin="anonymous">
+        </noscript>
+    <!-- Inline critical CSS for instant render -->
+    <style>
+        /* Critical, minimal layout to avoid left alignment before async CSS loads */
+        *{box-sizing:border-box;margin:0;padding:0}
+        :root{--primary-color:#667eea;--bg-dark:#1a1a2e;--text-light:#fff}
+        body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg-dark);color:var(--text-light);overflow-x:hidden}
+        /* Game background for first paint */
+        .game-container{min-height:100vh;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px}
+        /* Ensure the full-screen landing overlay is centered even before CSS files arrive */
+        .game-overlay{position:fixed;inset:0;width:100vw;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        /* Keep landing wrapper full width, center inner container */
+        #landingPage{width:100%;text-align:center}
+        #landingPage .container{width:auto;max-width:800px;margin:0 auto}
+        /* Avoid delaying LCP with fade-in; show container immediately */
+        #landingPage .container{opacity:1 !important;animation:none !important}
+        /* Reserve space for game area to prevent CLS */
+        .game-area{min-height:420px}
+        #gameGrid{min-height:320px}
+        /* Accessible skip link */
+        .skip-link{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+        .skip-link:focus{position:fixed;left:1rem;top:1rem;width:auto;height:auto;padding:.5rem .75rem;background:#0b5ed7;color:#fff;border-radius:6px;z-index:10000}
+        /* Visually hidden utility */
+        .sr-only{position:absolute !important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+        /* Ensure focus is clearly visible for keyboard users */
+        :focus-visible{outline:3px solid #0b5ed7;outline-offset:2px}
+        /* Prevent FOUC of elements hidden by .hidden class */
+        .hidden{display:none!important}
+        /* Respect reduced motion preference */
+        @media (prefers-reduced-motion: reduce){
+            *{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important}
+        }
+    </style>
+        <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
+        <!-- Cache busting: add ?v=X.X to force reload on changes -->
+        <link rel="preload" href="data:text/css;base64,LyogRGVza3RvcC1zcGVjaWZpYyBvdmVycmlkZXMgYW5kIGxheW91dCByZWZpbmVtZW50cw0KICAgVGhpcyBmaWxlIGlzIGludGVudGlvbmFsbHkgc21hbGwuIE1vdmUgb3IgYWRkIGRlc2t0b3Atb25seSBydWxlcyBoZXJlLg0KICAgSXQgaXMgbG9hZGVkIG9ubHkgb24gc2NyZWVucyA+PSA3NjlweCB2aWEgbWVkaWEgYXR0cmlidXRlIGluIGluZGV4Lmh0bWwuDQoqLw0KDQovKiBOT1RFOiBHcmlkIGNlbGwgc2l6ZSBvdmVycmlkZSBtb3ZlZCB0byB0aGVtZXMuY3NzIEBtZWRpYSBydWxlICovDQoNCi8qIFNsaWdodGx5IGxhcmdlciBwaWVjZXMgY29udGFpbmVyIHNwYWNpbmcgb24gZGVza3RvcCAqLw0KLnBpZWNlcy1jb250YWluZXIgew0KICAgIG1hcmdpbi10b3A6IDAuNnJlbTsNCiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlciAhaW1wb3J0YW50Ow0KfQ0KDQovKiBFbnN1cmUgZ2FtZS1ncmlkIGRvZXMgbm90IHVzZSB2aWV3cG9ydC1zaXplZCBhZGp1c3RtZW50cyBvbiBkZXNrdG9wICovDQouZ2FtZS1ncmlkIHsNCiAgICBtYXgtd2lkdGg6IGNhbGModmFyKC0tZ3JpZC1jZWxsLXNpemUpICogMTAgKyB2YXIoLS1ncmlkLWdhcCkgKiA5ICsgMzBweCk7DQp9DQoNCi8qIE1ha2UgZHJhZ2dlZCBjbG9uZSBtYXRjaCBkZXNrdG9wIHNpemluZyAqLw0KLmRyYWdnZWQtcGllY2UtY2xvbmUgLnBpZWNlLWJsb2NrIHsNCiAgICB3aWR0aDogY2FsYyh2YXIoLS1ncmlkLWNlbGwtc2l6ZSkgKiAwLjkpICFpbXBvcnRhbnQ7DQogICAgaGVpZ2h0OiBjYWxjKHZhcigtLWdyaWQtY2VsbC1zaXplKSAqIDAuOSkgIWltcG9ydGFudDsNCn0NCg0KLyogTGFuZGluZyBwYWdlIGRlc2t0b3Agb3ZlcnJpZGVzICovDQpAbWVkaWEgKG1pbi13aWR0aDogNzY5cHgpIHsNCiAgICAvKiBSZS1jZW50ZXIgbW9kZSBidXR0b25zIHdpdGhpbiBjb250YWluZXIgKi8NCiAgICBib2R5LmxhbmRpbmctcGFnZSAubW9kZS1saXN0IHsNCiAgICAgICAgcGFkZGluZzogMCAxcmVtOw0KICAgIH0NCg0KICAgIC8qIEVuc3VyZSB0dXRvcmlhbCBtb2RhbCBmaXRzIHZpZXdwb3J0IGFuZCBncmlkIGlzIHZpc2libGUgKi8NCiAgICBib2R5LmxhbmRpbmctcGFnZSAubW9kYWwtY29udGVudC50dXRvcmlhbC1tb2RhbCB7DQogICAgICAgIG1heC13aWR0aDogOTB2dzsNCiAgICAgICAgd2lkdGg6IGF1dG87DQogICAgICAgIG1hcmdpbjogMCAxcmVtOw0KICAgIH0NCiAgICBib2R5LmxhbmRpbmctcGFnZSAudHV0b3JpYWwtZ3JpZCB7DQogICAgICAgIG1heC13aWR0aDogMTAwJTsNCiAgICAgICAgd2lkdGg6IGF1dG87DQogICAgfQ0KfQ0K" as="style" media="(min-width:769px)" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/assets/mobile-WtO9BBqc.css?v=3.1" as="style" media="(max-width:768px)" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript>
+            <link rel="stylesheet" href="data:text/css;base64,LyogRGVza3RvcC1zcGVjaWZpYyBvdmVycmlkZXMgYW5kIGxheW91dCByZWZpbmVtZW50cw0KICAgVGhpcyBmaWxlIGlzIGludGVudGlvbmFsbHkgc21hbGwuIE1vdmUgb3IgYWRkIGRlc2t0b3Atb25seSBydWxlcyBoZXJlLg0KICAgSXQgaXMgbG9hZGVkIG9ubHkgb24gc2NyZWVucyA+PSA3NjlweCB2aWEgbWVkaWEgYXR0cmlidXRlIGluIGluZGV4Lmh0bWwuDQoqLw0KDQovKiBOT1RFOiBHcmlkIGNlbGwgc2l6ZSBvdmVycmlkZSBtb3ZlZCB0byB0aGVtZXMuY3NzIEBtZWRpYSBydWxlICovDQoNCi8qIFNsaWdodGx5IGxhcmdlciBwaWVjZXMgY29udGFpbmVyIHNwYWNpbmcgb24gZGVza3RvcCAqLw0KLnBpZWNlcy1jb250YWluZXIgew0KICAgIG1hcmdpbi10b3A6IDAuNnJlbTsNCiAgICBqdXN0aWZ5LWNvbnRlbnQ6IGNlbnRlciAhaW1wb3J0YW50Ow0KfQ0KDQovKiBFbnN1cmUgZ2FtZS1ncmlkIGRvZXMgbm90IHVzZSB2aWV3cG9ydC1zaXplZCBhZGp1c3RtZW50cyBvbiBkZXNrdG9wICovDQouZ2FtZS1ncmlkIHsNCiAgICBtYXgtd2lkdGg6IGNhbGModmFyKC0tZ3JpZC1jZWxsLXNpemUpICogMTAgKyB2YXIoLS1ncmlkLWdhcCkgKiA5ICsgMzBweCk7DQp9DQoNCi8qIE1ha2UgZHJhZ2dlZCBjbG9uZSBtYXRjaCBkZXNrdG9wIHNpemluZyAqLw0KLmRyYWdnZWQtcGllY2UtY2xvbmUgLnBpZWNlLWJsb2NrIHsNCiAgICB3aWR0aDogY2FsYyh2YXIoLS1ncmlkLWNlbGwtc2l6ZSkgKiAwLjkpICFpbXBvcnRhbnQ7DQogICAgaGVpZ2h0OiBjYWxjKHZhcigtLWdyaWQtY2VsbC1zaXplKSAqIDAuOSkgIWltcG9ydGFudDsNCn0NCg0KLyogTGFuZGluZyBwYWdlIGRlc2t0b3Agb3ZlcnJpZGVzICovDQpAbWVkaWEgKG1pbi13aWR0aDogNzY5cHgpIHsNCiAgICAvKiBSZS1jZW50ZXIgbW9kZSBidXR0b25zIHdpdGhpbiBjb250YWluZXIgKi8NCiAgICBib2R5LmxhbmRpbmctcGFnZSAubW9kZS1saXN0IHsNCiAgICAgICAgcGFkZGluZzogMCAxcmVtOw0KICAgIH0NCg0KICAgIC8qIEVuc3VyZSB0dXRvcmlhbCBtb2RhbCBmaXRzIHZpZXdwb3J0IGFuZCBncmlkIGlzIHZpc2libGUgKi8NCiAgICBib2R5LmxhbmRpbmctcGFnZSAubW9kYWwtY29udGVudC50dXRvcmlhbC1tb2RhbCB7DQogICAgICAgIG1heC13aWR0aDogOTB2dzsNCiAgICAgICAgd2lkdGg6IGF1dG87DQogICAgICAgIG1hcmdpbjogMCAxcmVtOw0KICAgIH0NCiAgICBib2R5LmxhbmRpbmctcGFnZSAudHV0b3JpYWwtZ3JpZCB7DQogICAgICAgIG1heC13aWR0aDogMTAwJTsNCiAgICAgICAgd2lkdGg6IGF1dG87DQogICAgfQ0KfQ0K" media="(min-width:769px)">
+            <link rel="stylesheet" href="/BlokusFocus/assets/mobile-WtO9BBqc.css?v=3.0" media="(max-width:768px)">
+        </noscript>
+    <!-- Animation CSS - load via idle callback -->
+    <script>
+    // Defer non-critical CSS until browser idle
+    // Cache busting: add ?v=X.X to force reload on changes
+    const deferCSS=['special-mode','row-clear','galaxy-row-clear','color-burst','special-actions','tutorialAnimation','game-background'];
+    const VERSION='3.1';
+    if('requestIdleCallback' in window){
+        requestIdleCallback(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}));
+    }else{
+        window.addEventListener('load',()=>setTimeout(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}),100));
+    }
+    </script>
+    <noscript>
+    </noscript>
+    <!-- Manifest will be injected dynamically (skipped in dev to avoid 404) -->
+  <script type="module" crossorigin src="/BlokusFocus/assets/index-DWQC5r71.js"></script>
+  <link rel="stylesheet" crossorigin href="/BlokusFocus/assets/index-BUXLTvqt.css">
+</head>
+<body class="landing-page" data-theme="default">
+    <a class="skip-link" href="#mainContent">Skip to main content</a>
+    <div id="app">
+        <div id="landingPage" class="game-overlay">
+            <div id="particle-background" aria-hidden="true" role="presentation"></div>
+
+            <button class="theme-toggle header-btn" id="theme-toggle" type="button" title="Toggle Theme" aria-label="Toggle theme" aria-pressed="false">
+                <i class="fas fa-moon icon-moon"></i>
+                <i class="fas fa-sun icon-sun" style="display: none;"></i>
+            </button>
+
+            <main class="container" id="mainContent" role="main"> 
+                <div class="header">
+                        <h1 class="logo">
+                            <span style="color: #22c55e">G</span><span style="color: #3b82f6">O</span><span style="color: #f59e0b">A</span><span style="color: #8b5cf6">L</span><span style="color: #ff858d">B</span><span style="color: #ffc3a0">G</span>
+                        </h1>
+                </div>
+
+                <!-- REFRESH TESTER - Color changes with version -->
+                <div id="versionBadge" style="position: fixed; top: 20px; right: 20px; width: 60px; height: 60px; background-color: #ff0000; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 9999; box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); animation: pulse 1.5s ease-in-out infinite; flex-direction: column;">
+                    <span style="color: white; font-weight: bold; font-size: 11px; text-align: center;">REFRESH</span>
+                    <span id="versionNumber" style="color: white; font-weight: bold; font-size: 9px; text-align: center;">v0</span>
+                </div>
+                <style>
+                    @keyframes pulse {
+                        0%, 100% { transform: scale(1); opacity: 1; }
+                        50% { transform: scale(1.1); opacity: 0.8; }
+                    }
+                </style>
+
+                <div class="stats-container glass-effect">
+                    <div class="stat-item">
+                        <span class="stat-value" data-target="285" id="highscore-display">0</span>
+                        <span class="stat-label"><i class="fa-solid fa-trophy"></i> High Score</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" data-target="7" id="pieces-unlocked">0</span>
+                        <span class="stat-label"><i class="fa-solid fa-shapes"></i> Pieces</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" data-target="0" id="achievements-count">0</span>
+                        <span class="stat-label"><i class="fa-solid fa-unlock-keyhole"></i> Unlocked</span>
+                    </div>
+                </div>
+
+                <div class="info-box glass-effect">
+                    <p>Bonus: Each mode has hidden achievements!</p>
+                </div>
+
+                <div class="mode-list">
+                    <button class="mode-button selectable" data-mode="classic" type="button">
+                        <div class="icon">
+                            <div class="piece-showcase">
+                                <div class="block b1"></div>
+                                <div class="block b2"></div>
+                                <div class="block b3"></div>
+                                <div class="block b4"></div>
+                                <div class="block b5"></div>
+                            </div>
+                        </div>
+                        <div class="text-content"><h2>Classic</h2></div>
+                    </button>
+                    <button class="mode-button selectable" data-mode="collection" type="button">
+                        <div class="icon">
+                            <div class="piece-showcase">
+                                <div class="block b1"></div>
+                                <div class="block b2"></div>
+                                <div class="block b3"></div>
+                                <div class="block b4"></div>
+                                <div class="block b5"></div>
+                            </div>
+                        </div>
+                        <div class="text-content"><h2>Collection</h2></div>
+                    </button>
+                </div>
+
+                <div class="actions-container">
+                    <button class="action-button glass-effect" id="how-to-play-btn" type="button">
+                        <i class="fa-solid fa-question"></i> How to Play
+                    </button>
+                    <button class="action-button glass-effect" id="contact-btn" type="button">
+                        <i class="fa-solid fa-envelope"></i> Contact
+                    </button>
+                </div>
+            </main>
+
+            <footer role="contentinfo"><span class="footer-chip">© 2025 GOALBG. All rights reserved.</span></footer>
+        </div>
+
+        <div class="game-container hidden">
+            <div class="overlay" aria-hidden="true" role="presentation"></div>
+            <div class="glow-effects" aria-hidden="true" role="presentation">
+                <div class="glow"></div>
+                <div class="glow"></div>
+                <div class="glow"></div>
+            </div>
+            <div class="floating-pieces" aria-hidden="true" role="presentation">
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+                <div class="puzzle-piece"></div>
+            </div>
+            <div class="stars" id="gameStars" aria-hidden="true" role="presentation"></div>
+            <div class="particles-overlay" id="particles-overlay" aria-hidden="true" role="presentation"></div>
+
+            <div class="header-controls">
+                <div class="top-row-controls">
+                    <button id="pauseButton" aria-label="Pause Game" title="Pause Game" class="header-btn pause" type="button">
+                        <i class="fas fa-pause"></i>
+                    </button>
+                    <button id="restartButton" aria-label="Restart Game" title="Restart Game" class="header-btn restart hidden" type="button">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <div class="score-info"></div>
+                    <button id="darkModeToggleGame" aria-label="Toggle Dark Mode" title="Toggle Dark Mode" class="header-btn dark-mode-toggle" type="button">
+                        <i class="fas fa-moon" id="darkModeIconGame"></i>
+                    </button>
+                    <button id="settingsButton" aria-label="Settings" title="Settings" class="header-btn settings" type="button">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="center-score-wrapper">
+                <div class="center-score">
+                    <p id="score" class="score-display" role="status" aria-live="polite" aria-atomic="true">0</p>
+                </div>
+            </div>
+
+            <div class="game-area">
+                <canvas id="rowClearCanvas" aria-hidden="true"></canvas>
+                <div id="gameGrid" class="game-grid"></div>
+                <div id="comboMessage" class="combo-message hidden" role="status" aria-live="polite" aria-atomic="true">COMBO!</div>
+            </div>
+
+            <div id="piecesContainer" class="pieces-container"></div>
+            <div class="special-actions hidden">
+                <button class="action-btn" id="rotateBtn" title="Rotate piece" aria-label="Rotate piece" type="button">
+                    <span class="shine-clip"><i class="fa-solid fa-sync-alt"></i></span>
+                    <span class="badge" id="rotateCount">0</span>
+                </button>
+                <button class="action-btn" id="undoBtn" title="Undo move" aria-label="Undo move" type="button">
+                    <span class="shine-clip"><i class="fa-solid fa-undo-alt"></i></span>
+                    <span class="badge" id="undoCount">0</span>
+                </button>
+                <button class="action-btn" id="clearLineBtn" title="Clear row or column" aria-label="Clear row or column" type="button">
+                    <span class="shine-clip"><i class="fa-solid fa-broom"></i></span>
+                    <span class="badge" id="clearLineCount">0</span>
+                </button>
+                <button class="action-btn" id="flipBtn" title="Flip piece vertically" aria-label="Flip piece vertically" type="button">
+                    <span class="shine-clip"><i class="fa-solid fa-exchange-alt"></i></span>
+                    <span class="badge" id="flipCount">0</span>
+                </button>
+            </div>
+
+            <div id="gameOverMessage" class="game-overlay-inner hidden">
+                <div class="game-over-container">
+                    <div class="game-over-glow"></div>
+                    <h2 class="game-over-title">GAME OVER!</h2>
+                    <div class="game-over-content glass-effect">
+                        <div class="score-item">
+                            <div class="score-label">Your Score</div>
+                            <div class="score-value" id="finalScore">0</div>
+                        </div>
+                        <div class="score-divider"></div>
+                        <div class="score-item">
+                            <div class="score-label">High Score</div>
+                            <div class="score-value" id="gameOverHighScore">0</div>
+                        </div>
+                    </div>
+                    <button id="gameOverRestartButton" class="game-over-button" type="button">
+                        <i class="fas fa-redo"></i> Play Again
+                    </button>
+                </div>
+            </div>
+
+            <div id="draggedPieceClone" class="dragged-piece-clone hidden"></div>
+        </div>
+
+        <div id="settingsModal" class="settings-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+            <div class="settings-modal-content">
+                <button class="settings-close" onclick="closeSettingsModal()" aria-label="Close settings dialog" type="button">&times;</button>
+                <h2 id="settingsTitle" tabindex="-1">Settings</h2>
+                <div class="settings-option">
+                    <label for="toggleSound">Sound Effects</label>
+                    <input type="checkbox" id="toggleSound" checked>
+                </div>
+                <div class="settings-option">
+                    <label for="toggleMusic">Music</label>
+                    <input type="checkbox" id="toggleMusic" checked>
+                </div>
+                <div class="settings-option">
+                    <label for="toggleVibration">Vibration</label>
+                    <input type="checkbox" id="toggleVibration" checked>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"
+                integrity="sha512-aK/tUNiLozMpB8o1+j5j5+hP8Y1Sx3Fwb1mKiU3y+0CPYvvXLV6FIpJZBfmVZ4qYaHDvYWQlhknE8N55aqWWQ=="
+                crossorigin="anonymous" defer></script>
+        <script src="js/debugGridMobile.js?v=3.0" defer></script>
