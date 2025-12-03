@@ -6,35 +6,35 @@
 @media (max-width: 768px) {
     :root {
         /* Mobile dimensions - responsive sizing based on viewport height */
-        --grid-cell-size: clamp(29px, 5.5vh, 36px); /* Scales between 29-36px based on viewport */
-        --piece-block-size: calc(var(--grid-cell-size) * 0.7);
+        --grid-cell-size: clamp(29px, 5.5vh, 36px) !important; /* Scales between 29-36px based on viewport */
+        --piece-block-size: calc(var(--grid-cell-size) * 0.7) !important;
         
         /* Calculate grid total size for mobile */
-        --game-grid-gap: 2px;
-        --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap));
-        --game-grid-padding: 16px;
-        --game-grid-border: 2px;
-        --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
+        --game-grid-gap: 2px !important;
+        --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap)) !important;
+        --game-grid-padding: 16px !important;
+        --game-grid-border: 2px !important;
+        --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border)) !important;
     }
 
     /* Small phones (iPhone SE, iPhone 6/7/8 - height ~667px) */
     @media (max-height: 700px) {
         :root {
-            --grid-cell-size: 28px;
+            --grid-cell-size: 28px !important;
         }
     }
 
     /* Extra small phones (iPhone 5S - height ~568px) */
     @media (max-height: 600px) {
         :root {
-            --grid-cell-size: 24px;
+            --grid-cell-size: 24px !important;
         }
     }
 
     /* Large phones (Galaxy S20 Ultra, iPhone 12 Pro Max - height ~915px+) */
     @media (min-height: 900px) {
         :root {
-            --grid-cell-size: 36px;
+            --grid-cell-size: 36px !important;
         }
     }
 }
@@ -148,12 +148,11 @@
     max-height: clamp(84px, 16vh, 160px) !important;
     margin: clamp(16px, 3vh, 28px) 0 0 0 !important;
     padding: clamp(10px, 2.6vw, 16px) clamp(8px, 2vw, 14px) !important;
-    /* Keep transparent on mobile, don't force background */
-    background: transparent;
-    border-radius: 0;
-    backdrop-filter: none;
-    box-shadow: none;
-    border: none;
+    background: transparent !important;
+    border-radius: 0 !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    border: none !important;
     box-sizing: border-box !important;
     overflow-y: hidden !important;
     overflow-x: auto !important;
