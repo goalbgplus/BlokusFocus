@@ -1,0 +1,906 @@
+/* NOTE (MIGRATION): Mobile @media rules migrated to css/mobile.css
+    ------------------------------------------------------------------
+    Ky skedar përmban stilin e UI-së së lojës. Rregullat responsive për
+    pajisje të vogla (p.sh. @media (max-width: 768px)) u kopjuan në
+    css/mobile.css për t'i centralizuar. Origjinalet mbeten këtu për
+    verifikim dhe rikthim të shpejtë nëse nevojitet.
+*/
+
+/* Game UI styles: arena, grid, pieces, and dragged clone
+    =========================================================
+    Stili i përditësuar me dizajnin e ri "Kristal Solid" dhe rregullimet e paraqitjes.
+*/
+
+:root {
+    /* Ensure consistent block sizes between inventory and game arena */
+    --grid-cell-size: 40px;
+    --piece-block-size: var(--grid-cell-size); /* Match block size to grid cell size */
+
+    /* Variablat ekzistuese të lojës suaj */
+    --grid-gap: 2px; /* Reduced spacing between cells and pieces */
+    --grid-step: calc(var(--grid-cell-size) + var(--grid-gap));
+    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--grid-gap));
+    --game-grid-padding: 30px; /* padding: 15px on each side */
+    --game-grid-border: 2px; /* border: 1px on each side */
+    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
+    --view-height: 100vh;
+    --grid-cell-radius: calc(var(--grid-cell-size) * 0.25);
+}
+
+@supports (height: 100dvh) {
+    :root {
+        --view-height: 100dvh;
+    }
+}
+
+/* ======================================= */
+/* == DIZAJNI I RI PËR ARENËN E LOJËS == */
+/* ======================================= */
+
+
+.game-area {
+            /* Center the grid within the rounded square layer and size to content */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: none;
+            width: auto; /* auto size to content */
+            height: auto; /* auto size to content */
+            padding: 0;
+            box-sizing: border-box;
+            position: relative;
+            overflow: visible;
+        }
+
+/* Strong variant used for larger clears (more visible) */
+@keyframes ext-game-area-shake-strong {
+    /* Strong vibration: larger horizontal oscillations */
+    0%   { transform: translateX(0); }
+    8%   { transform: translateX(-10px); }
+    16%  { transform: translateX(10px); }
+    24%  { transform: translateX(-8px); }
+    32%  { transform: translateX(8px); }
+    40%  { transform: translateX(-6px); }
+    48%  { transform: translateX(6px); }
+    56%  { transform: translateX(-4px); }
+    64%  { transform: translateX(4px); }
+    76%  { transform: translateX(-2px); }
+    88%  { transform: translateX(2px); }
+    100% { transform: translateX(0); }
+}
+
+.game-area.ext-game-area-shake-strong,
+.game-grid-container.ext-game-area-shake-strong,
+.game-grid.ext-game-area-shake-strong {
+    animation: ext-game-area-shake-strong 360ms linear both;
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* Respect prefers-reduced-motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .game-area.ext-game-area-shake,
+    .game-grid-container.ext-game-area-shake,
+    .game-grid.ext-game-area-shake,
+    .game-area.ext-game-area-shake-strong,
+    .game-grid-container.ext-game-area-shake-strong,
+    .game-grid.ext-game-area-shake-strong {
+        animation: none !important;
+        transform: none !important;
+    }
+}
+
+/* Subtle shake effect applied to the game area during clears */
+@keyframes ext-game-area-shake {
+    0% { transform: translateX(0) translateY(0) rotate(0deg); }
+    15% { transform: translateX(-6px) translateY(-1px) rotate(-0.35deg); }
+    30% { transform: translateX(6px) translateY(0px) rotate(0.25deg); }
+    45% { transform: translateX(-4px) translateY(0px) rotate(-0.15deg); }
+    60% { transform: translateX(4px) translateY(0px) rotate(0.08deg); }
+    80% { transform: translateX(-2px) translateY(0px) rotate(-0.04deg); }
+    100% { transform: translateX(0) translateY(0) rotate(0deg); }
+}
+
+.game-area.ext-game-area-shake,
+.game-grid-container.ext-game-area-shake,
+.game-grid.ext-game-area-shake {
+    animation: ext-game-area-shake 260ms linear both;
+    will-change: transform;
+}
+
+        .game-grid-container {
+            position: relative;
+            padding: var(--game-grid-padding);
+            border-radius: 35px;
+            background: rgba(0, 0, 0, 0.2);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.5),
+                inset 0 3px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .game-grid {
+            /* Ensure the grid is centered and matches the rounded square layer */
+            margin: auto; /* Center the grid */
+            display: grid;
+            grid-template-columns: repeat(10, var(--grid-cell-size));
+            grid-template-rows: repeat(10, var(--grid-cell-size));
+            gap: var(--grid-gap);
+            width: var(--game-grid-total-size);
+            height: var(--game-grid-total-size);
+            max-width: none !important;
+            max-height: none !important;
+            padding: var(--game-grid-padding);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 28px;
+            box-shadow: 
+                inset 0 4px 10px rgba(0, 0, 0, 0.3),
+                inset 0 -2px 10px rgba(255, 255, 255, 0.05),
+                0 2px 5px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            position: relative;
+            box-sizing: border-box; /* Include padding in dimensions */
+        }
+
+        /* Shtresë shtesë për efekt thellësie */
+        .game-grid::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            border-radius: 22px;
+            background: linear-gradient(to bottom, 
+                rgba(0, 0, 0, 0.2) 0%, 
+                transparent 10%,
+                transparent 90%,
+                rgba(0, 0, 0, 0.3) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .grid-cell {
+            width: var(--grid-cell-size);
+            height: var(--grid-cell-size);
+            background-color: rgba(0, 0, 0, 0.15);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+            border-radius: var(--grid-cell-radius, 10px);
+            position: relative;
+            z-index: 2;
+            transform: translateY(0px);
+            transform-origin: center center;
+        }
+
+        /* Block wrapper inside grid cell - this is what gets the filled-* classes */
+        .grid-cell-block {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Rubber band elastic bounce animation for placed blocks */
+        @keyframes rubberBandBounce {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+            30% {
+                transform: scale(1.15);
+                opacity: 1;
+            }
+            45% {
+                transform: scale(0.92);
+            }
+            60% {
+                transform: scale(1.05);
+            }
+            75% {
+                transform: scale(0.98);
+            }
+            90% {
+                transform: scale(1.01);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Smooth placement animation with rubber band effect - VETËM për qelizat me ngjyrë (blloqet)! */
+        .grid-cell[class*="filled-"].placed {
+            animation: rubberBandBounce 650ms cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            transform-origin: center center;
+            z-index: 10; /* Ensure animated cells appear above static grid cells */
+            position: relative;
+        }
+
+        .grid-cell-block[class*="filled-"].placed {
+            animation: rubberBandBounce 650ms cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+            transform-origin: center center;
+            z-index: 10; /* Ensure animated cells appear above static grid cells */
+            position: relative;
+        }
+        
+        /* Ensure pseudo-elements inherit the animation smoothly - VETËM për blloqet me ngjyrë! */
+        .grid-cell[class*="filled-"].placed::before,
+        .grid-cell[class*="filled-"].placed::after,
+        .grid-cell-block[class*="filled-"].placed::before,
+        .grid-cell-block[class*="filled-"].placed::after {
+            animation: inherit;
+        }
+
+        /* Smooth, fluid entrance animation for new pieces */
+        @keyframes newPieceEntrance {
+            0% {
+                opacity: 0;
+                transform: translateY(25px) scale(0.85);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            /* Simplified animation for accessibility */
+            .grid-cell.placed {
+                animation: simpleFadeIn 200ms ease-out forwards !important;
+            }
+            
+            @keyframes simpleFadeIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+                to {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+            }
+            
+            .piece.new-piece {
+                animation: none !important;
+            }
+        }
+
+/* ================================== */
+/* == DIZAJNI I RI PËR BLLOQET == */
+/* ================================== */
+
+/* --- BLLOQET E VENDOSURA NË RRJETË --- */
+/* Stili aplikohet te vetë qeliza kur mbushet */
+.grid-cell[class*="filled-"] {
+    position: relative;
+    border-radius: 25%;
+    background: linear-gradient(135deg, var(--color-dark-1), var(--color-dark-2));
+    box-shadow: 
+        0px 4px 10px rgba(0,0,0,0.2),
+        inset 1px 1px 2px var(--color-bevel-light),
+        inset -1px -1px 2px var(--color-bevel-dark);
+    overflow: hidden;
+}
+
+/* Stili aplikohet te blloqja brenda qelizës kur mbushet */
+.grid-cell-block[class*="filled-"] {
+    position: relative;
+    border-radius: 25%;
+    background: linear-gradient(135deg, var(--color-dark-1), var(--color-dark-2));
+    box-shadow: 
+        0px 4px 10px rgba(0,0,0,0.2),
+        inset 1px 1px 2px var(--color-bevel-light),
+        inset -1px -1px 2px var(--color-bevel-dark);
+    overflow: hidden;
+}
+
+/* --- BLLOQET E INVENTARIT (MË TË VOGLA) --- */
+.piece-block {
+    width: var(--piece-block-size);
+    height: var(--piece-block-size);
+    position: relative;
+    border-radius: 25%;
+    background: linear-gradient(135deg, var(--color-dark-1), var(--color-dark-2));
+    box-shadow: 
+        0px 4px 10px rgba(0,0,0,0.2),
+        inset 1px 1px 2px var(--color-bevel-light),
+        inset -1px -1px 2px var(--color-bevel-dark);
+    overflow: hidden;
+}
+
+
+/* Bërthama e brendshme me dritë (për të dyja llojet e blloqeve) */
+.piece-block::before,
+.grid-cell[class*="filled-"]::before,
+.grid-cell-block[class*="filled-"]::before {
+    content: '';
+    position: absolute;
+    top: -10%; left: -10%;
+    width: 120%; height: 120%;
+    background: radial-gradient(
+        circle at 40% 40%,
+        var(--color-core-light) 0%,
+        var(--color-core-mid) 30%,
+        transparent 60%
+    );
+    mix-blend-mode: lighten;
+}
+
+/* Shkëlqimi i mprehtë sipër (për të dyja llojet e blloqeve) */
+.piece-block::after,
+.grid-cell[class*="filled-"]::after,
+.grid-cell-block[class*="filled-"]::after {
+    content: '';
+    position: absolute;
+    top: 8%; left: 11%;
+    width: 72%; height: 16%;
+    /* Glass-morphism styled trapezoid highlight */
+    background: rgba(255, 255, 255, 0.57);
+    clip-path: polygon(0% 25%, 100% 0%, 90% 100%, 10% 100%);
+    filter: blur(4px);
+    box-shadow: inset 0 0 6px rgba(255,255,255,0.6);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* --- PËRCAKTIMI I NGJYRAVE --- */
+.grid-cell.filled-1, .piece-block.color-1, .grid-cell-block.filled-1 {
+    --color-dark-1: #2a7dcc; --color-dark-2: #164d85; --color-core-light: rgba(168, 208, 255, 0.8); --color-core-mid: rgba(94, 174, 255, 0.5); --color-bevel-light: rgba(255, 255, 255, 0.2); --color-bevel-dark: rgba(15, 52, 92, 0.4);
+}
+.grid-cell.filled-2, .piece-block.color-2, .grid-cell-block.filled-2 {
+    --color-dark-1: #21a179; /* green primary */
+    --color-dark-2: #0f8b66; /* green darker shade */
+    --color-core-light: rgba(173, 255, 219, 0.8); /* light mint glow */
+
+body.dragging .grid-cell {
+    transition: none !important;
+}
+
+#draggedPieceClone {
+    pointer-events: none;
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    will-change: transform;
+}
+
+#draggedPieceClone.dd-dragging {
+    display: block;
+    opacity: 0.95;
+    filter: drop-shadow(0 9px 24px rgba(0, 0, 0, 0.6));
+    -webkit-filter: drop-shadow(0 9px 24px rgba(0, 0, 0, 0.6));
+}
+
+#draggedPieceClone.dd-dragging .piece {
+    transform: scale(1.02);
+    opacity: 0.98;
+}
+
+.grid-cell.dd-highlight {
+    outline: 3px solid rgba(34, 197, 94, 0.95) !important;
+    background: linear-gradient(180deg, rgba(34, 197, 94, 0.08), rgba(34, 197, 94, 0.04)) !important;
+    transform: translateY(-2px) scale(1.02) !important;
+    outline-offset: 0;
+}
+
+.grid-cell.dd-invalid {
+    outline: 3px solid rgba(239, 68, 68, 0.9) !important;
+    background: linear-gradient(180deg, rgba(239, 68, 68, 0.06), rgba(239, 68, 68, 0.03)) !important;
+    transform: translateY(0) scale(1) !important;
+    outline-offset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #draggedPieceClone.dd-dragging,
+    .grid-cell.dd-highlight,
+    .grid-cell.dd-invalid {
+        transition: none !important;
+    }
+}
+    --color-core-mid: rgba(81, 238, 176, 0.5); /* mid green core */
+    --color-bevel-light: rgba(255, 255, 255, 0.2);
+    --color-bevel-dark: rgba(7, 63, 46, 0.4);
+}
+.grid-cell.filled-3, .piece-block.color-3, .grid-cell-block.filled-3 {
+   --color-dark-1: #6b4f2a; /* baza bronz e errët */
+    --color-dark-2: #4a3220; /* thellësi kafe e errët për kontrast */
+    --color-core-light: rgba(198, 140, 83, 0.75); /* ton i ngrohtë bronzi i hapur */
+    --color-core-mid: rgba(150, 105, 60, 0.5);   /* bronz mesatar i zbutur */
+    --color-bevel-light: rgba(255, 235, 200, 0.15); /* reflektim i lehtë ngjyrë ari */
+    --color-bevel-dark: rgba(40, 25, 15, 0.55);  /* kontur i ngrohtë i errët */
+}
+.grid-cell.filled-4, .piece-block.color-4, .grid-cell-block.filled-4 {
+    --color-dark-1: #57378f; --color-dark-2: #381f62; --color-core-light: rgba(188, 163, 220, 0.8); --color-core-mid: rgba(144, 107, 191, 0.5); --color-bevel-light: rgba(255, 255, 255, 0.2); --color-bevel-dark: rgba(27, 12, 51, 0.4);
+}
+.grid-cell.filled-5, .piece-block.color-5, .grid-cell-block.filled-5 {
+    --color-dark-1: #d64e1f; --color-dark-2: #a3320f; --color-core-light: rgba(255, 187, 166, 0.8); --color-core-mid: rgba(255, 137, 98, 0.5); --color-bevel-light: rgba(255, 255, 255, 0.2); --color-bevel-dark: rgba(80, 24, 0, 0.4);
+}
+.grid-cell.filled-6, .piece-block.color-6, .grid-cell-block.filled-6 {
+    --color-dark-1: #259dcf; --color-dark-2: #14648b; --color-core-light: rgba(162, 222, 250, 0.8); --color-core-mid: rgba(88, 199, 249, 0.5); --color-bevel-light: rgba(255, 255, 255, 0.2); --color-bevel-dark: rgba(10, 68, 94, 0.4);
+}
+.grid-cell.filled-7, .piece-block.color-7, .grid-cell-block.filled-7 {
+    --color-dark-1: #cd5498; --color-dark-2: #9e3670; --color-core-light: rgba(250, 187, 218, 0.8); --color-core-mid: rgba(246, 137, 195, 0.5); --color-bevel-light: rgba(255, 255, 255, 0.2); --color-bevel-dark: rgba(77, 21, 52, 0.4);
+}
+
+
+/* --- RREGULLIME PËR STRUKTURËN E INVENTARIT DHE DRAG/DROP --- */
+
+.grid-cell.ghost {
+    opacity: 0.48;
+    border: none;
+    border-radius: 25%;
+    background: linear-gradient(180deg, var(--ghost-fill-color, rgba(255,229,59,0.12)), transparent) !important;
+    box-shadow:
+        0 0 0 2px var(--ghost-border-color, rgba(255,229,59,0.95)),
+        0 0 14px var(--ghost-glow-color, rgba(255,229,59,0.55));
+    z-index: 2000;
+}
+
+/* Kontejneri i formave tani ka stilin e xhamit */
+.pieces-container, #piecesContainer {
+   margin: 0.35rem auto 0 auto; /* keep centered horizontally within parent */
+   overflow: visible !important; /* Ensure pieces are fully visible */
+    display: flex !important;
+    justify-content: space-around !important; /* distribute pieces across full width */
+    align-items: center !important; /* center children vertically within container */
+    gap: 1rem;
+    padding: 12px 16px;
+    width: 100%; /* make container span full available width */
+    max-width: calc(100% - 40px);
+    /* Make container visually distinct: subtle glass panel */
+    background: var(--glass-bg, rgba(255,255,255,0.04)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur, 6px));
+    backdrop-filter: blur(var(--glass-blur, 6px));
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.04);
+    min-height: auto !important;
+    z-index: 1000; /* Keep above background elements */
+}
+
+.piece {
+    display: inline-block !important;
+    cursor: grab;
+    /* CRITICAL: Remove transform from transition to prevent rubber-band lag during drag */
+    transition: opacity 0.2s ease;
+    will-change: transform, opacity;
+    touch-action: none;
+}
+.pieces-container,
+#piecesContainer,
+.game-area,
+.game-grid,
+.game-grid .grid-cell,
+.game-container {
+    touch-action: none;
+}
+
+html,
+body,
+#app,
+.game-overlay,
+.game-overlay-inner,
+.modal-overlay,
+.particles-overlay,
+#particles-overlay,
+#rowClearOverlay,
+.cell-clear-overlay,
+.debug-overlay,
+#debugOverlay {
+    touch-action: none;
+    overscroll-behavior: contain; /* stop scroll chaining on drag overlays */
+}
+.piece.dragging { opacity: 0.3; cursor: grabbing; }
+
+/* Smooth entrance animation for newly generated pieces */
+.piece.new-piece {
+    animation: newPieceEntrance 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.piece-grid { display: grid; gap: var(--grid-gap); }
+
+
+/* --- Dragged Piece Clone & Transform Reset (FIXED) --- */
+
+/* Kontejneri i klonit që ndjek gishtin/miun */
+.dragged-piece-clone {
+    position: fixed !important;
+    z-index: 10000 !important;
+    pointer-events: none;
+    display: none;
+    padding: 0;
+    border-radius: var(--border-radius-base);
+    /* Pa transition në transform për lëvizje 1:1, por lëmë JS ta kontrollojë transform-in */
+    will-change: transform;
+    background: none !important;
+    box-shadow: none !important;
+    border: none !important;
+    --piece-block-size: var(--grid-cell-size);
+}
+
+/* Kur kloni është aktiv, e shfaqim si grid me gap korrekt */
+.dragged-piece-clone.show {
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    gap: var(--grid-gap);
+}
+
+/* Blloqet brenda klonit ndjekin madhësinë e qelizës së rrjetës */
+.dragged-piece-clone.show .piece-block,
+.dragged-piece-clone .piece-grid .piece-block,
+body .dragged-piece-clone .piece-block {
+    width: var(--grid-cell-size) !important;
+    height: var(--grid-cell-size) !important;
+    min-width: var(--grid-cell-size) !important;
+    min-height: var(--grid-cell-size) !important;
+    max-width: var(--grid-cell-size) !important;
+    max-height: var(--grid-cell-size) !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+}
+
+/* ULTIMATE OVERRIDE: gap i klonit të jetë gjithmonë i saktë */
+.dragged-piece-clone.show .piece-grid,
+body .dragged-piece-clone .piece-grid {
+    gap: var(--grid-gap) !important;
+    grid-gap: var(--grid-gap) !important; /* Fallback për browsera më të vjetër */
+}
+
+/* CRITICAL: asnjë animacion/transition brenda klonit,
+   por NUK prekim transform – e lëmë JS ta përdorë për translate3d */
+.dragged-piece-clone,
+.dragged-piece-clone .piece,
+.dragged-piece-clone .piece-grid,
+.dragged-piece-clone .piece-block,
+.dragged-piece-clone .piece-grid .piece-block,
+.dragged-piece-clone .piece-block.clone-block {
+    animation: none !important;
+    transition: none !important;
+    filter: none !important;
+    /* MOS vendos transform këtu – duhet për translate3d nga JS */
+}
+
+
+
+/* Add glass panel background to the game container to cover body gradient */
+.game-container {
+    background: var(--glass-bg);
+    box-shadow: inset 0 1px 1px var(--glass-border), 0 10px 30px rgba(0,0,0,0.3);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    padding: clamp(16px, 3vh, 32px) clamp(12px, 6vw, 48px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1rem; /* uniform vertical spacing between sections */
+    overflow: hidden;
+}
+
+/* Panel Animations relocated from style.css */
+.game-overlay.hidden, .game-container.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+    transform: translateY(20px);
+}
+.game-container.hidden { display: none !important; }
+.game-container.show,
+.game-overlay:not(.hidden) {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition: opacity 0.4s ease, transform 0.4s ease, visibility 0.4s;
+}
+.game-container.slide-up-in {
+    opacity: 0;
+    transform: translateY(50px) scale(0.9);
+}
+.game-container.slide-up-in.active {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+/* TABLET LAYOUT: Medium sizes for iPad and similar devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+    :root {
+        --tablet-vertical-reserved: clamp(260px, 32vh, 360px);
+        --tablet-grid-max-size: max(320px, calc(var(--view-height) - var(--tablet-vertical-reserved)));
+        --grid-cell-size: clamp(
+            28px,
+            min(4.6vw, (var(--tablet-grid-max-size) - var(--game-grid-padding) - var(--game-grid-border)) / 10),
+            44px
+        );
+        --piece-block-size: calc(var(--grid-cell-size) * 0.9);
+    }
+    
+    .game-container {
+        display: grid !important;
+        grid-template-columns:
+            minmax(120px, 0.8fr)
+            var(--game-grid-total-size)
+            minmax(120px, 0.8fr);
+        grid-template-rows: auto var(--game-grid-total-size);
+        grid-template-areas: 
+            ". header ."
+            "score grid pieces";
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        gap: clamp(12px, 2vw, 24px);
+        padding: clamp(14px, 3vh, 26px) clamp(12px, 4vw, 28px);
+        box-sizing: border-box;
+        max-width: 100vw;
+        max-height: 100vh;
+        overflow: hidden;
+    }
+    
+    .header-controls {
+        grid-area: header;
+        justify-self: center;
+        align-self: start;
+        margin: 0;
+        position: sticky;
+        top: clamp(6px, 1.8vh, 14px);
+        z-index: 1000;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .center-score-wrapper {
+        grid-area: score;
+        justify-self: center;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        max-height: var(--game-grid-height);
+        margin: 0;
+    }
+    
+    .center-score .score-display {
+        font-size: clamp(2rem, 4.5vw, 2.8rem) !important;
+    }
+    
+    .header-controls .top-row-controls button {
+        width: clamp(36px, 5.6vw, 46px) !important;
+        height: clamp(36px, 5.6vw, 46px) !important;
+        font-size: clamp(16px, 2.8vw, 20px) !important;
+        /* Preserve shine and glassmorphism effects from main CSS */
+        position: relative !important;
+        overflow: hidden !important;
+        padding: clamp(5px, 1.4vw, 7px) clamp(6px, 1.8vw, 9px) !important;
+    }
+    
+    .game-area {
+        grid-area: grid;
+        justify-self: center;
+        align-self: center;
+        width: var(--game-grid-total-size) !important;
+        height: var(--game-grid-total-size) !important;
+        max-width: var(--game-grid-total-size);
+        max-height: var(--game-grid-total-size);
+        margin: 0 0 clamp(12px, 3vh, 28px) 0; /* add bottom spacing so pieces bar sits below */
+        padding: 0;
+    }
+    
+    .game-container > .pieces-container,
+    .pieces-container, #piecesContainer {
+        grid-area: pieces;
+        justify-self: center;
+        align-self: center;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important; /* keep ends and middle spacing */
+        gap: clamp(10px, 1.8vw, 18px) !important;
+        width: 100% !important;
+        max-width: min(var(--game-grid-total-size), 100%) !important;
+        height: auto !important; /* allow container to size to its contents */
+        max-height: clamp(84px, 16vh, 160px) !important; /* limit inventory height to avoid overlap */
+        margin: clamp(16px, 3vh, 28px) 0 0 0 !important; /* add vertical spacing above the pieces bar */
+        padding: clamp(10px, 2.6vw, 16px) clamp(8px, 2vw, 14px) !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        border: none !important;
+        overflow-y: hidden !important;
+        overflow-x: auto !important; /* allow horizontal scrolling if pieces overflow */
+    }
+
+    /* Ensure each piece block sizes correctly inside the flex row */
+    .game-container > .pieces-container .piece,
+    .pieces-container .piece,
+    #piecesContainer .piece {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        justify-content: center !important;
+        align-items: center !important;
+        margin: 0 6px !important;
+    }
+
+    /* Center the middle piece exactly when there are three pieces
+       by giving the middle item auto margins. First will sit left, last right. */
+    .game-container > .pieces-container .piece:nth-child(2),
+    .pieces-container .piece:nth-child(2),
+    #piecesContainer .piece:nth-child(2) {
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+
+    .game-container > .pieces-container .piece,
+    .pieces-container .piece,
+    #piecesContainer .piece {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        width: auto;
+    }
+}
+
+/* DESKTOP LAYOUT: Larger sizes for desktop screens */
+@media (min-width: 1025px) {
+    :root {
+    --grid-cell-size: 90px; /* Larger blocks for desktop */
+    --piece-block-size: 65px; /* Slightly smaller for inventory */
+    --game-area-width: var(--game-grid-total-size);
+    --game-grid-padding: 20px; /* Reduced padding for desktop */
+    }
+    
+    .game-container {
+        position: fixed !important;
+        inset: 0 !important;
+        display: grid !important;
+        grid-template-columns:
+            minmax(220px, calc(var(--game-grid-total-size) * 0.9))
+            var(--game-grid-total-size)
+            minmax(220px, calc(var(--game-grid-total-size) * 0.9));
+        grid-template-rows: auto var(--game-grid-total-size);
+        grid-template-areas: 
+            ". header ."
+            "score grid pieces";
+        justify-content: center;
+        align-content: center;
+        justify-items: center;
+        gap: 30px;
+        padding: clamp(30px, 5vh, 60px) clamp(40px, 7vw, 140px);
+        box-sizing: border-box;
+        max-width: 100vw;
+        max-height: 100vh;
+        overflow: hidden;
+    }
+    
+    /* Header spans game-area width and sits top-center */
+    .header-controls {
+        position: absolute !important;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: var(--game-area-width) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        margin: 0 auto !important;
+        z-index: 1000;
+    }
+    .header-controls .top-row-controls button i {
+        font-size: 1em !important;
+        line-height: 1 !important;
+    }
+    
+    .center-score-wrapper {
+        grid-area: score;
+        justify-self: center;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        max-height: var(--game-grid-height);
+        margin: 0;
+    }
+    
+    .center-score .score-display {
+        font-size: 4rem !important;
+    }
+    
+    .header-controls .top-row-controls button {
+        width: 56px !important;  /* Increased from 36px for desktop */
+        height: 56px !important; /* Increased from 36px for desktop */
+        font-size: 22px !important;  /* Increased from 16px for desktop */
+        line-height: 1 !important;
+        margin: 0 8px !important;
+        padding: 10px 12px !important;  /* Increased padding for larger buttons */
+        /* Preserve shine and glassmorphism effects from main CSS */
+        position: relative !important;
+        overflow: hidden !important;
+    }
+    
+    .game-area {
+        grid-area: grid;
+        justify-self: center;
+        align-self: center;
+    width: var(--game-grid-total-size) !important;
+    height: var(--game-grid-total-size) !important;
+    max-width: var(--game-grid-total-size);
+    max-height: var(--game-grid-total-size);
+        margin: 0;
+        padding: 0;
+    }
+    
+    .pieces-container, #piecesContainer {
+        grid-area: pieces;
+        justify-self: center;
+        align-self: center;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 30px !important;
+        width: 100% !important;
+    max-width: var(--game-grid-total-size) !important;
+    height: auto !important;
+    max-height: var(--game-grid-total-size) !important;
+        margin: 28px 0 0 0 !important; /* add spacing above pieces on desktop */
+        padding: 20px 15px !important;
+        background: transparent !important;
+        border-radius: 0 !important;
+        backdrop-filter: none !important;
+        box-shadow: none !important;
+        border: none !important;
+    overflow-y: auto !important;
+    overflow-x: auto !important;
+    }
+}
+
+/* Default: show sheen consistently across all block variants */
+.grid-cell[class*="filled-"]::after,
+.piece-block::after {
+    opacity: 1;
+    transition: opacity 700ms ease-out;
+}
+
+/* Dark-mode override: match light-mode glass design exactly */
+body[data-theme="dark"] .game-container {
+    background: var(--glass-bg) !important;
+    box-shadow: inset 0 1px 1px var(--glass-border), 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur)) !important;
+}
+
+body[data-theme="dark"] .game-grid-container {
+    background: var(--glass-bg) !important;
+    box-shadow: inset 0 1px 1px var(--glass-border), 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(var(--glass-blur)) !important;
+    -webkit-backdrop-filter: blur(var(--glass-blur)) !important;
+    border-radius: 35px !important;
+}
+
+/* Inventory shine override: make reflection more opaque for better visibility */
+.pieces-container .piece-block::after,
+#piecesContainer .piece-block::after {
+    background: rgba(255,255,255,0.8) !important;
+}
+
+/* Pause all animations and transitions while game is paused */
+.game-container.paused * {
+    animation-play-state: paused !important;
+}
+
+

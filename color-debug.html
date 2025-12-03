@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Debug - Blokus Grid</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: #fff;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+        }
+        .container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        iframe {
+            width: 400px;
+            height: 600px;
+            border: 2px solid #444;
+        }
+        .console {
+            flex: 1;
+            min-width: 400px;
+            background: #0a0a0a;
+            border: 2px solid #444;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 600px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .log-group {
+            margin-bottom: 10px;
+            padding: 8px;
+            background: #1a1a1a;
+            border-left: 3px solid #00ff00;
+        }
+        .log-title {
+            color: #00ff00;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .log-item {
+            color: #0ff;
+            margin-left: 10px;
+            font-size: 11px;
+        }
+        h1 {
+            margin-top: 0;
+        }
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎨 Color Debug Console</h1>
+    <button onclick="clearLogs()">Clear Logs</button>
+    
+    <div class="container">
+        <iframe id="gameFrame" src="index.html"></iframe>
+        <div class="console" id="console"></div>
+    </div>
+
+    <script>
+        const consoleDiv = document.getElementById('console');
+        const gameFrame = document.getElementById('gameFrame');
+        
+        // Capture logs from the iframe
+        gameFrame.onload = () => {
+            const gameWindow = gameFrame.contentWindow;
+            const gameConsole = gameWindow.console;
+            
+            // Override console.log
+            gameConsole.log = function(...args) {
+                addLog(args.join(' '));
+                console.log(...args);
+            };
+            
+            // Override console.group
+            gameConsole.group = function(label) {
+                addLog(`\n📦 ${label}`);
+            };
+            
+            // Override console.groupEnd
+            gameConsole.groupEnd = function() {
+                addLog('---');
+            };
+        };
+        
+        function addLog(text) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-item';
+            logEntry.textContent = `[${timestamp}] ${text}`;
+            consoleDiv.appendChild(logEntry);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        function clearLogs() {
+            consoleDiv.innerHTML = '';
+        }
+    </script>
+</body>
+</html>

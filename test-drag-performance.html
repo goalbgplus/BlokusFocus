@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drag Performance Test - Blokus Grid</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ffd700;
+        }
+        .instructions {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .instructions h2 {
+            color: #4fc3f7;
+            margin-top: 0;
+        }
+        .instructions ol {
+            line-height: 1.8;
+        }
+        .test-link {
+            display: inline-block;
+            background: #4fc3f7;
+            color: #000;
+            padding: 15px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 10px 0;
+            transition: all 0.3s;
+        }
+        .test-link:hover {
+            background: #81d4fa;
+            transform: translateY(-2px);
+        }
+        .optimization-list {
+            background: #1e3a5f;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .optimization-list h3 {
+            color: #81d4fa;
+            margin-top: 0;
+        }
+        .optimization-list ul {
+            line-height: 2;
+        }
+        .check {
+            color: #4caf50;
+            margin-right: 5px;
+        }
+        .fps-info {
+            background: #2e7d32;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .fps-info strong {
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Blokus Grid - Drag Performance Test</h1>
+        
+        <div class="instructions">
+            <h2>📋 Si të Testoni Performancën</h2>
+            <ol>
+                <li><strong>Hapni lojën:</strong> Klikoni butonin më poshtë për të hapur lojën</li>
+                <li><strong>Filloni një lojë:</strong> Zgjidhni një mode (Classic ose Collection)</li>
+                <li><strong>Testoni drag në Desktop:</strong>
+                    <ul>
+                        <li>Kapni një pjesë me mouse</li>
+                        <li>Lëvizeni shpejt nëpër grid</li>
+                        <li>Duhet të jetë <strong>shumë smooth</strong> dhe pa lag</li>
+                    </ul>
+                </li>
+                <li><strong>Testoni në Mobile (nëse e keni):</strong>
+                    <ul>
+                        <li>Hapni në telefon/tablet</li>
+                        <li>Kapni një pjesë me gisht</li>
+                        <li>Lëvizeni shpejt</li>
+                        <li>Lag-u duhet të jetë minimal ose zero</li>
+                    </ul>
+                </li>
+                <li><strong>Kontrolloni FPS (Advanced):</strong>
+                    <ul>
+                        <li>Hapni Chrome DevTools (F12)</li>
+                        <li>Shkoni te Performance tab</li>
+                        <li>Filloni recording</li>
+                        <li>Lëvizni një pjesë për 2-3 sekonda</li>
+                        <li>Ndaloni recording dhe shikoni FPS</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <a href="index.html" class="test-link">🎯 Hap Lojën për Test</a>
+
+        <div class="optimization-list">
+            <h3>✨ Optimizime të Aplikuara</h3>
+            <ul>
+                <li><span class="check">✓</span> <strong>RAF Throttling:</strong> Mouse events tani përdorin requestAnimationFrame</li>
+                <li><span class="check">✓</span> <strong>Highlight Cache:</strong> Eliminuar document.querySelectorAll() në çdo frame</li>
+                <li><span class="check">✓</span> <strong>Position Change Detection:</strong> Skip updates kur pozicioni nuk ndryshon</li>
+                <li><span class="check">✓</span> <strong>GPU Acceleration:</strong> transform: translate3d() në vend të left/top</li>
+                <li><span class="check">✓</span> <strong>CSS will-change:</strong> Browser i përgatit elementet për animacion</li>
+                <li><span class="check">✓</span> <strong>Transition Cleanup:</strong> Hequr transitions që shkaktonin lag</li>
+                <li><span class="check">✓</span> <strong>RAF Cleanup:</strong> cancelAnimationFrame në handleMouseUp/TouchEnd</li>
+            </ul>
+        </div>
+
+        <div class="fps-info">
+            <strong>🎯 Target FPS:</strong> 60 FPS gjatë drag operations
+            <br>
+            <strong>📱 Mobile:</strong> Smooth experience edhe në pajisje mid-range
+            <br>
+            <strong>🖥️ Desktop:</strong> Buttery smooth, zero lag
+        </div>
+
+        <div class="instructions">
+            <h2>🔍 Çfarë të Vëzhgoni</h2>
+            <ul style="line-height: 2;">
+                <li><strong>Smooth tracking:</strong> Pjesa duhet të ndjekë gishtin/hirin pa lag</li>
+                <li><strong>Ghost preview:</strong> Duhet të shfaqet menjëherë, pa delay</li>
+                <li><strong>Highlight update:</strong> Duhet të ndryshojë shpejt kur kaloni mbi celula të ndryshme</li>
+                <li><strong>CPU/Battery:</strong> Duhet të përdorë më pak energji se më parë</li>
+            </ul>
+        </div>
+
+        <div class="instructions" style="background: #1e3a5f;">
+            <h2>📊 Performance Metrics (Chrome DevTools)</h2>
+            <p>Nëse doni të matni performance saktësisht:</p>
+            <ol style="line-height: 2;">
+                <li>Hapni DevTools (F12)</li>
+                <li>Shkoni te tab "Performance"</li>
+                <li>Klikoni "Record" (ose Ctrl+E)</li>
+                <li>Lëvizni një pjesë për 2-3 sekonda</li>
+                <li>Ndaloni recording</li>
+                <li>Shikoni:
+                    <ul>
+                        <li><strong>FPS:</strong> Duhet të jetë afër 60 (green line)</li>
+                        <li><strong>Main thread:</strong> Duhet të ketë më pak punë se më parë</li>
+                        <li><strong>GPU:</strong> Duhet të jetë më aktiv (compositing)</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>

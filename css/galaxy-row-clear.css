@@ -1,0 +1,94 @@
+/* Galaxy Row Clear Animation - Scoped & Isolated from Grid */
+/* Blocks use piece styling; grid cells remain static during animation */
+
+/* Container for clear bar — positioned absolutely within game area, never affects grid */
+.ext-galaxy-clear-bar-container {
+    position: absolute;
+    height: var(--grid-cell-size);
+    /* Clip particles to the bar bounds to avoid leaking outside the frame */
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1000;
+    border-radius: var(--grid-cell-radius, 10px);
+}
+
+.ext-galaxy-clear-bar-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    opacity: 0;
+    transform: scaleY(0);
+    animation: ext-galaxy-barOpenClose 1000ms ease-out forwards;
+    will-change: transform, opacity;
+    border-radius: var(--grid-cell-radius, 10px);
+    /* Ensure any child particles are clipped to this rounded inner area */
+    overflow: hidden;
+    /* border and boxShadow are set dynamically via JS based on dominant color */
+}
+
+@keyframes ext-galaxy-barOpenClose {
+    0% { opacity: 1; transform: scaleY(0.05); }
+    30% { opacity: 1; transform: scaleY(1); }
+    70% { opacity: 1; transform: scaleY(1); }
+    100% { opacity: 0; transform: scaleY(0); }
+}
+
+/* Particles — positioned in absolute space, never attached to grid */
+.ext-galaxy-particle {
+    position: absolute;
+    border-radius: 8px;
+    opacity: 0;
+    z-index: 1001;
+    background-color: currentColor;
+    box-shadow: 0 0 12px currentColor;
+    animation: ext-galaxy-particleMove 1200ms linear forwards;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+@keyframes ext-galaxy-particleMove {
+    0% {
+        transform: translate(0, 0) scale(0.3);
+        opacity: 0;
+    }
+    15% {
+        opacity: 1;
+        transform: translate(var(--ext-dx-start), var(--ext-dy-start)) scale(1);
+    }
+    100% {
+        transform: translate(var(--ext-dx-end), var(--ext-dy-end)) scale(0);
+        opacity: 0;
+    }
+}
+
+/* Block collapse animation — applied ONLY to overlaid blocks, NOT grid cells */
+.ext-galaxy-block-collapse {
+    animation: ext-galaxy-blockCollapse 1000ms ease-in forwards !important;
+    will-change: transform, opacity;
+    position: relative !important;
+    z-index: 999 !important;
+    pointer-events: none !important;
+    display: block !important;
+}
+
+@keyframes ext-galaxy-blockCollapse {
+    0% { 
+        transform: scale(1); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: scale(0); 
+        opacity: 0; 
+    }
+}
+
+/* Accessibility: respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    .ext-galaxy-clear-bar-inner,
+    .ext-galaxy-particle,
+    .ext-galaxy-block-collapse {
+        animation: none !important;
+        opacity: 0 !important;
+    }
+}

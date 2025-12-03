@@ -1,0 +1,58 @@
+/* drag-drop.css - Mobile-optimized styles for smooth 60fps dragging
+   Minimal styles - only override drag-specific behavior
+   Avoid interfering with existing game grid styles
+*/
+
+/* Only add drag-specific optimizations */
+
+/* Disable transitions while dragging to prevent lag */
+body.dragging .grid-cell {
+  transition: none !important;
+}
+
+/* Dragged piece clone container */
+#draggedPieceClone {
+  pointer-events: none;
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 9999;
+  will-change: transform;
+}
+
+#draggedPieceClone.dd-dragging {
+  display: block;
+  opacity: 0.95;
+  filter: drop-shadow(0 9px 24px rgba(0,0,0,0.6));
+  -webkit-filter: drop-shadow(0 9px 24px rgba(0,0,0,0.6));
+}
+
+#draggedPieceClone.dd-dragging .piece {
+  transform: scale(1.02);
+  opacity: 0.98;
+}
+
+/* Highlight styles - only for drag feedback */
+.grid-cell.dd-highlight {
+  outline: 3px solid rgba(34,197,94,0.95) !important;
+  background: linear-gradient(180deg, rgba(34,197,94,0.08), rgba(34,197,94,0.04)) !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  outline-offset: 0;
+}
+
+.grid-cell.dd-invalid {
+  outline: 3px solid rgba(239,68,68,0.9) !important;
+  background: linear-gradient(180deg, rgba(239,68,68,0.06), rgba(239,68,68,0.03)) !important;
+  transform: translateY(0) scale(1) !important;
+  outline-offset: 0;
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  #draggedPieceClone.dd-dragging,
+  .grid-cell.dd-highlight,
+  .grid-cell.dd-invalid {
+    transition: none !important;
+  }
+}

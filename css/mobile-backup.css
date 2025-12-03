@@ -1,0 +1,534 @@
+/* Mobile Performance CSS - Konsoliduar dhe Optimizuar për performancë mbi 90
+   Loaded only on screens <= 768px via media attribute in index.html.
+   Krijohet për të rritur performancën nga 72 në 90+
+*/
+
+/* =========================
+   CRITICAL PATH VARIABLES 
+   ========================= */
+:root {
+    /* Mobile optimized grid */
+    --mobile-grid-max-size: max(240px, calc(var(--view-height, 100vh) - clamp(220px, 30vh, 320px)));
+    --mobile-cell-width-based: calc((92vw - 9 * var(--grid-gap)) / 10);
+    --mobile-cell-height-based: calc((var(--mobile-grid-max-size) - var(--game-grid-padding, 30px) - var(--game-grid-border, 2px)) / 10);
+    --grid-cell-size: clamp(28px, min(var(--mobile-cell-width-based), var(--mobile-cell-height-based)), 52px);
+    --piece-block-size: calc(var(--grid-cell-size) * 0.7);
+    
+    /* Performance optimized animations */
+    --mobile-transition-fast: 0.1s ease;
+    --mobile-transition-medium: 0.15s ease;
+    --mobile-animation-duration: 0.12s;
+}
+
+/* =========================
+   CRITICAL: DISABLE EXPENSIVE EFFECTS
+   ========================= */
+
+/* Remove heavy backdrop filters and blurs for performance */
+.game-container {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Optimize background effects - reduce/disable floating pieces */
+.floating-pieces .puzzle-piece:nth-child(n+7) {
+    display: none !important; /* Show only 6 pieces instead of 10 */
+}
+
+.floating-pieces .puzzle-piece {
+    width: clamp(28px, 4vw, 45px) !important;
+    height: clamp(28px, 4vw, 45px) !important;
+    animation-duration: 20s !important; /* Slower animations for better performance */
+    backdrop-filter: blur(2px) !important; /* Reduced blur from 6px to 2px */
+    -webkit-backdrop-filter: blur(2px) !important;
+}
+
+/* Simplify glow effects */
+.glow-effects .glow {
+    filter: blur(30px) !important; /* Reduced from 70px to 30px */
+    width: clamp(100px, 15vw, 200px) !important;
+    height: clamp(100px, 15vw, 200px) !important;
+    animation-duration: 25s !important; /* Slower for performance */
+}
+
+/* Reduce stars complexity */
+.stars .star {
+    width: 1px !important;
+    height: 1px !important;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6) !important; /* Reduced glow */
+    animation-duration: 6s !important; /* Faster, simpler twinkle */
+}
+
+/* =========================
+   LAYOUT OPTIMIZATIONS
+   ========================= */
+
+/* Optimized header spacing */
+.header-controls {
+    margin: 8px 0 4px !important;
+    gap: 8px !important;
+}
+
+/* Efficient center score positioning */
+.center-score-wrapper {
+    margin: 12px 0 2px !important;
+}
+
+.center-score {
+    padding: 6px 12px !important;
+    font-size: 1.6em !important;
+}
+
+/* Optimized center score glass effect */
+.center-score::before {
+    backdrop-filter: blur(4px) !important; /* Reduced from 10px to 4px */
+    -webkit-backdrop-filter: blur(4px) !important;
+    box-shadow: 
+        0 6px 20px rgba(0, 0, 0, 0.2) !important, /* Simplified shadows */
+        inset 0 1px 1px rgba(255,255,255,0.2) !important;
+}
+
+/* Disable expensive score sheen animation on mobile */
+.center-score::after {
+    display: none !important;
+}
+
+/* =========================
+   GAME GRID OPTIMIZATIONS
+   ========================= */
+
+/* Streamlined game area */
+.game-area {
+    border-radius: 20px !important; /* Reduced from 24px */
+    backdrop-filter: blur(4px) !important; /* Critical: reduced from heavy blur */
+    -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* Simplified grid cells */
+.grid-cell[class*="filled-"] {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15) !important; /* Simplified shadows */
+    transition: var(--mobile-transition-fast) !important;
+}
+
+.grid-cell {
+    animation-duration: var(--mobile-animation-duration) !important;
+    transition-duration: var(--mobile-animation-duration) !important;
+}
+
+/* =========================
+   PIECES CONTAINER OPTIMIZATION
+   ========================= */
+
+.pieces-container {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    gap: 6px !important; /* Reduced from 8px */
+    padding: 6px !important; /* Reduced from 8px */
+    overflow: visible !important;
+    min-height: calc(var(--piece-block-size) * 4 + 16px) !important; /* Reduced padding */
+}
+
+/* Optimized piece blocks */
+.piece-block {
+    box-shadow: 0 1px 2px rgba(0,0,0,0.12) !important; /* Minimal shadows */
+    transition: transform var(--mobile-transition-fast) !important;
+}
+
+/* Efficient dragged piece clone */
+.dragged-piece-clone .piece-block {
+    width: var(--grid-cell-size) !important;
+    height: var(--grid-cell-size) !important;
+    min-width: var(--grid-cell-size) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important; /* Reduced shadow complexity */
+}
+
+/* =========================
+   BUTTON OPTIMIZATIONS
+   ========================= */
+
+/* Optimized header buttons */
+.game-container .header-controls .top-row-controls button,
+body:not(.landing-page) .header-controls .top-row-controls button {
+    backdrop-filter: blur(6px) !important; /* Reduced from 12px */
+    -webkit-backdrop-filter: blur(6px) !important;
+    transition: var(--mobile-transition-medium) !important;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.15) !important, /* Simplified shadows */
+        inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Simplified hover effects for better performance */
+.game-container .header-controls .top-row-controls button:hover,
+body:not(.landing-page) .header-controls .top-row-controls button:hover {
+    backdrop-filter: blur(8px) !important; /* Slightly increased on hover */
+    -webkit-backdrop-filter: blur(8px) !important;
+    transform: translateY(-1px) scale(1.02) !important; /* Reduced scale effect */
+}
+
+/* Disable shine effects on mobile for performance */
+.game-container .header-controls .top-row-controls button::before,
+body:not(.landing-page) .header-controls .top-row-controls button::before {
+    display: none !important;
+}
+
+/* =========================
+   FAB BUTTON OPTIMIZATIONS
+   ========================= */
+
+.fab-container .fab-main,
+.fab-container .fab-option {
+    backdrop-filter: blur(4px) !important; /* Reduced blur */
+    -webkit-backdrop-filter: blur(4px) !important;
+    transition: var(--mobile-transition-medium) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important; /* Simplified shadows */
+}
+
+/* =========================
+   ANIMATION PERFORMANCE OPTIMIZATIONS
+   ========================= */
+
+/* Faster, more efficient animations */
+@keyframes score-pop {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.08); } /* Reduced from 1.12 */
+    100% { transform: scale(1); }
+}
+
+.score-animated {
+    animation: score-pop 0.2s ease-out !important; /* Reduced from 0.3s */
+}
+
+/* Simplified hint animations */
+.grid-cell.hint-highlight {
+    animation-duration: 1s !important; /* Reduced from 1.5s */
+    box-shadow: 0 0 10px var(--hint-glow-color) !important; /* Reduced glow */
+}
+
+/* Optimized floating score */
+.floating-score {
+    animation-duration: 0.8s !important; /* Reduced from 1.2s */
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4) !important; /* Simplified shadow */
+}
+
+/* =========================
+   MODAL AND OVERLAY OPTIMIZATIONS
+   ========================= */
+
+/* Simplified modal backgrounds */
+.game-overlay-inner {
+    backdrop-filter: blur(6px) !important; /* Reduced from 10px */
+    -webkit-backdrop-filter: blur(6px) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.25) !important; /* Simplified shadow */
+}
+
+.unlock-progress {
+    backdrop-filter: blur(6px) !important; /* Reduced from 10px */
+    -webkit-backdrop-filter: blur(6px) !important;
+    box-shadow: 0 4px 20px rgba(31, 38, 135, 0.3) !important; /* Simplified shadow */
+}
+
+/* =========================
+   PARTICLE SYSTEM OPTIMIZATIONS
+   ========================= */
+
+/* Optimized particles overlay */
+#particles-overlay {
+    contain: layout style paint size !important; /* Add size containment */
+    will-change: auto !important; /* Only when needed */
+}
+
+.particle {
+    width: 4px !important; /* Reduced from 7px */
+    height: 4px !important;
+    opacity: 0.7 !important; /* Reduced from 0.85 */
+    box-shadow: none !important; /* Remove glow completely */
+}
+
+/* =========================
+   CRITICAL PATH: DISABLE EXPENSIVE FEATURES
+   ========================= */
+
+/* Disable complex gradients and effects on mobile */
+@supports not (backdrop-filter: blur(1px)) {
+    .game-container,
+    .center-score::before,
+    .game-area,
+    .fab-main,
+    .fab-option,
+    .game-overlay-inner {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: rgba(0,0,0,0.3) !important; /* Fallback solid background */
+    }
+}
+
+/* =========================
+   REDUCE MOTION FOR BATTERY SAVING
+   ========================= */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .floating-pieces,
+    .glow-effects,
+    .stars {
+        display: none !important;
+    }
+}
+
+/* =========================
+   RESPONSIVE BREAKPOINTS
+   ========================= */
+
+/* Small mobile optimizations */
+@media (max-width: 480px) {
+    .center-score {
+        font-size: 1.4em !important;
+        padding: 4px 8px !important;
+    }
+    
+    .pieces-container {
+        gap: 4px !important;
+        padding: 4px !important;
+    }
+    
+    /* Further reduce background effects */
+    .floating-pieces .puzzle-piece:nth-child(n+5) {
+        display: none !important; /* Show only 4 pieces on small screens */
+    }
+    
+    .glow-effects .glow:nth-child(n+3) {
+        display: none !important; /* Show only 2 glow effects */
+    }
+}
+
+/* Tiny screens - maximum performance mode */
+@media (max-width: 320px) {
+    .floating-pieces,
+    .glow-effects,
+    .stars {
+        display: none !important; /* Remove all background effects */
+    }
+    
+    .game-container {
+        background: linear-gradient(135deg, #1a1a2e, #16213e) !important; /* Simple gradient */
+    }
+    
+    .center-score::before {
+        display: none !important; /* Remove glass effect completely */
+    }
+    
+    .center-score {
+        background: rgba(0,0,0,0.4) !important; /* Simple background */
+        border: 1px solid rgba(255,255,255,0.2) !important;
+    }
+}
+
+/* =========================
+   LANDING PAGE MOBILE OPTIMIZATIONS
+   ========================= */
+
+/* Optimize landing page theme toggle */
+#theme-toggle.theme-toggle {
+    backdrop-filter: blur(4px) !important; /* Reduced from 10px */
+    -webkit-backdrop-filter: blur(4px) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important; /* Simplified shadow */
+}
+
+/* Simplified stats and info containers */
+.glass-effect {
+    backdrop-filter: blur(4px) !important; /* Reduced from 10px */
+    -webkit-backdrop-filter: blur(4px) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08) !important; /* Simplified shadow */
+}
+
+/* =========================
+   CRITICAL PERFORMANCE HINT
+   ========================= */
+
+/* Force GPU layer for smooth transforms */
+.game-grid,
+.pieces-container,
+.center-score,
+.fab-container {
+    will-change: transform !important;
+    transform: translateZ(0) !important; /* Force GPU layer */
+}
+
+/* =========================
+   FINAL PERFORMANCE NOTES:
+   
+   These optimizations target:
+   1. Reduced backdrop-filter blur (major GPU savings)
+   2. Simplified shadows and gradients
+   3. Faster animation durations
+   4. Fewer background elements
+   5. Better containment and layering
+   6. Conditional feature disabling
+   
+   Expected Lighthouse improvement: 72 → 85-92
+   ========================= */
+
+/* Smaller padding for center score */
+.center-score {
+    padding: 0 8px; /* tighten vertical spacing */
+    font-size: 1.8em;
+}
+
+/* Pieces area: stack horizontally on mobile; remove extra padding to tighten gap */
+.pieces-container {
+    display: flex !important;
+    flex-direction: row;
+    justify-content: space-between !important;
+    gap: 8px;
+    padding: 8px !important;
+    overflow: visible !important;
+    min-height: calc(var(--piece-block-size) * 4 + 20px) !important;
+}
+/* Adjust score wrapper position: more distance from header, closer to grid */
+.center-score-wrapper {
+    margin: 20px 0 4px !important;
+}
+
+/* Reduce shadows and disable heavy animations on mobile */
+.grid-cell[class*="filled-"] {
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Ensure drag clone blocks match grid cell size on mobile */
+.dragged-piece-clone .piece-block {
+    width: var(--grid-cell-size) !important;
+    height: var(--grid-cell-size) !important;
+    min-width: var(--grid-cell-size) !important;
+    min-height: var(--grid-cell-size) !important;
+}
+
+/* Avoid particle overlay on mobile by default */
+.particles-overlay { display: none !important; }
+
+/*
+    MOBILE RESPONSIVE INDEX
+    -----------------------
+    This file can collect and host all mobile @media rules.
+
+    Detected @media blocks in the repo (safe to review / migrate):
+    - css/style.css  (many @media: max-width: 768px, 600px, 480px, 320px, device-pixel-ratio variants)
+    - css/game-ui.css (contains @media (max-width: 768px))
+    - css/landing-page.css (several @media (max-width: 600px))
+    - css/fab-buttons.css (contains @media (max-width: 768px) and 480px)
+
+    Recommended next step: review the listed files and move the specific @media blocks
+    you want to centralize here. I intentionally did not remove original blocks to keep
+    the change non-destructive. If you want, I can auto-migrate the blocks and add
+    commented backups in the originals.
+*/
+
+/* From game-ui.css: mobile overrides */
+@media (max-width: 768px) {
+    :root {
+        --grid-cell-size: calc((90vw - 9 * var(--grid-gap) - 30px) / 10);
+        --piece-block-size: calc((90vw - 9 * var(--grid-gap) - 30px) / 10 * 0.7);
+    }
+    .game-grid {
+        width: 90vw;
+    }
+    .pieces-container {
+        width: 90vw;
+        box-sizing: border-box; /* Prevent overflow */
+        margin-bottom: 100px !important; /* Always above FAB */
+        max-width: calc(100vw - 32px) !important;
+    }
+    
+    /* Performance optimizations for mobile - keep some visual appeal */
+    .game-container .puzzle-piece,
+    .game-container .glow-effects,
+    .game-container .floating-pieces {
+        /* Reduce count and simplify instead of hiding completely */
+        animation-duration: 8s !important;
+        will-change: auto !important;
+    }
+    
+    /* Hide only the heaviest effects */
+    .particles-overlay,
+    #particles-overlay {
+        display: none !important;
+    }
+    
+    /* Keep stars but make them lightweight */
+    .game-container .stars {
+        display: block !important;
+    }
+    
+    .game-container .star {
+        width: 1px !important;
+        height: 1px !important;
+        animation-duration: 4s !important;
+        animation-iteration-count: infinite !important;
+        opacity: 0.6 !important;
+        box-shadow: 0 0 4px rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    /* Reduce expensive effects but keep game area untouched */
+    .game-container .puzzle-piece,
+    .game-container .glow-effects,
+    .game-container .floating-pieces,
+    .particles-overlay,
+    #particles-overlay,
+    .tutorial-modal,
+    .settings-modal {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    
+    /* Keep game area (.game-grid) with its original styling - don't override */
+    
+    /* Keep pieces container transparent as before */
+    .pieces-container {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+        background: transparent !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+    }
+    
+    /* Light glass effect for score only */
+    .center-score {
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+    }
+    
+    /* Keep minimal shadows for depth */
+    .grid-cell[class*="filled-"] {
+        box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;
+    }
+    
+    .piece-block {
+        box-shadow: 0 1px 2px rgba(0,0,0,0.15) !important;
+    }
+    
+    /* Simplify animations but keep placement feedback */
+    .grid-cell {
+        animation-duration: 150ms !important;
+        transition-duration: 150ms !important;
+    }
+    
+    /* Keep piece hover/drag effects minimal */
+    .piece-block {
+        transition: transform 0.1s ease !important;
+    }
+}
+
+
+
+/ *   M o b i l e   P e r f o r m a n c e   O p t i m i z a t i o n s   * / 
+ 
+ 

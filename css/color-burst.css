@@ -1,0 +1,296 @@
+/* Color Burst Effect for Logo */
+.logo {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.logo:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 10px rgba(255, 229, 59, 0.6));
+}
+
+/* Color burst container */
+.color-burst-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 9999;
+    overflow: hidden;
+}
+
+/* Color burst particles */
+.color-burst-particle {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: color-burst-explosion 2s ease-out forwards;
+}
+
+/* Different particle sizes */
+.color-burst-particle.small {
+    width: 8px;
+    height: 8px;
+}
+
+.color-burst-particle.medium {
+    width: 12px;
+    height: 12px;
+}
+
+.color-burst-particle.large {
+    width: 16px;
+    height: 16px;
+}
+
+/* Color burst explosion animation */
+@keyframes color-burst-explosion {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    20% {
+        transform: translate(calc(-50% + var(--end-x, 0px) * 0.3), calc(-50% + var(--end-y, 0px) * 0.3)) scale(1.2);
+        opacity: 1;
+    }
+    60% {
+        transform: translate(calc(-50% + var(--end-x, 0px) * 0.8), calc(-50% + var(--end-y, 0px) * 0.8)) scale(0.8);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(calc(-50% + var(--end-x, 0px)), calc(-50% + var(--end-y, 0px))) scale(0.3);
+        opacity: 0;
+    }
+}
+
+/* Color burst sparkles */
+.color-burst-sparkle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: currentColor;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkle-twinkle 1.2s ease-in-out infinite;
+}
+
+.color-burst-sparkle::before {
+    content: '✨';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    animation: sparkle-rotate 2s linear infinite;
+}
+
+@keyframes sparkle-twinkle {
+    0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+@keyframes sparkle-rotate {
+    from { transform: translate(-50%, -50%) rotate(0deg); }
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Rainbow wave effect */
+.rainbow-wave {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 300%;
+    height: 100vh;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 0, 150, 0.3) 20%,
+        rgba(255, 105, 0, 0.3) 30%,
+        rgba(255, 215, 0, 0.3) 40%,
+        rgba(0, 191, 255, 0.3) 50%,
+        rgba(138, 43, 226, 0.3) 60%,
+        rgba(50, 205, 50, 0.3) 70%,
+        rgba(255, 69, 180, 0.3) 80%,
+        transparent 100%
+    );
+    pointer-events: none;
+    z-index: 9998;
+    animation: rainbow-sweep 1.5s ease-out forwards;
+}
+
+@keyframes rainbow-sweep {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* Click feedback animation */
+@keyframes click-bounce {
+    0% { 
+        transform: scale(0) translateY(0); 
+        opacity: 0; 
+    }
+    50% { 
+        transform: scale(1.2) translateY(-10px); 
+        opacity: 1; 
+    }
+    100% { 
+        transform: scale(1) translateY(-20px); 
+        opacity: 0; 
+    }
+}
+@keyframes color-burst-explosion {
+    0% {
+        opacity: 1;
+        transform: scale(0) rotate(0deg);
+        filter: brightness(1.5) saturate(1.5);
+    }
+    20% {
+        opacity: 1;
+        transform: scale(1.2) rotate(180deg);
+        filter: brightness(2) saturate(2);
+    }
+    60% {
+        opacity: 0.8;
+        transform: scale(1) rotate(360deg);
+        filter: brightness(1.2) saturate(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.3) rotate(720deg);
+        filter: brightness(0.5) saturate(0.5);
+    }
+}
+
+/* Ripple effect from logo */
+.color-burst-ripple {
+    position: absolute;
+    border: 3px solid transparent;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: color-burst-ripple 1.5s ease-out forwards;
+}
+
+@keyframes color-burst-ripple {
+    0% {
+        width: 0px;
+        height: 0px;
+        opacity: 1;
+        border-color: rgba(255, 229, 59, 0.8);
+    }
+    50% {
+        opacity: 0.6;
+        border-color: rgba(255, 105, 180, 0.6);
+    }
+    100% {
+        width: 300px;
+        height: 300px;
+        opacity: 0;
+        border-color: rgba(138, 43, 226, 0.2);
+    }
+}
+
+/* Logo flash effect */
+.logo.color-burst-active {
+    animation: logo-flash 0.8s ease-out;
+}
+
+@keyframes logo-flash {
+    0% {
+        transform: scale(1);
+        filter: brightness(1) saturate(1);
+        text-shadow: 0 0 5px rgba(255, 229, 59, 0.5);
+    }
+    25% {
+        transform: scale(1.15);
+        filter: brightness(1.8) saturate(1.8) hue-rotate(30deg);
+        text-shadow: 0 0 20px rgba(255, 105, 180, 0.8), 0 0 40px rgba(138, 43, 226, 0.6);
+    }
+    50% {
+        transform: scale(1.1);
+        filter: brightness(2) saturate(2) hue-rotate(60deg);
+        text-shadow: 0 0 30px rgba(0, 191, 255, 0.9), 0 0 60px rgba(255, 215, 0, 0.7);
+    }
+    75% {
+        transform: scale(1.05);
+        filter: brightness(1.5) saturate(1.5) hue-rotate(90deg);
+        text-shadow: 0 0 25px rgba(50, 205, 50, 0.8), 0 0 50px rgba(255, 69, 0, 0.6);
+    }
+    100% {
+        transform: scale(1);
+        filter: brightness(1) saturate(1) hue-rotate(0deg);
+        text-shadow: 0 0 10px rgba(255, 229, 59, 0.6);
+    }
+}
+
+/* Sparkle trails */
+.color-burst-sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: white;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkle-trail 1.2s ease-out forwards;
+}
+
+@keyframes sparkle-trail {
+    0% {
+        opacity: 1;
+        transform: scale(0);
+        box-shadow: 0 0 6px currentColor;
+    }
+    30% {
+        opacity: 1;
+        transform: scale(1.5);
+        box-shadow: 0 0 12px currentColor;
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0.5);
+        box-shadow: 0 0 3px currentColor;
+    }
+}
+
+/* Rainbow wave effect */
+.rainbow-wave {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 200%;
+    height: 100vh;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 0, 150, 0.1) 20%,
+        rgba(255, 105, 180, 0.15) 25%,
+        rgba(255, 215, 0, 0.2) 30%,
+        rgba(0, 191, 255, 0.15) 35%,
+        rgba(138, 43, 226, 0.1) 40%,
+        transparent 60%
+    );
+    pointer-events: none;
+    z-index: 9998;
+    animation: rainbow-sweep 1.5s ease-out forwards;
+}
+
+@keyframes rainbow-sweep {
+    0% {
+        left: -100%;
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        left: 100%;
+        opacity: 0;
+    }
+}
+

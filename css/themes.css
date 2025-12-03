@@ -1,0 +1,131 @@
+/* UNIFIED THEME VARIABLES - Central definitions for all components */
+
+:root {
+    /* === SIZING VARIABLES === */
+    /* Game Grid */
+    --grid-cell-size: 28px;
+    --piece-block-size: 28px;
+    --grid-gap: 2px;
+    --grid-step: calc(var(--grid-cell-size) + var(--grid-gap));
+    
+    /* Landing Page Icons & Components */
+    --icon-size: 60px;
+    --theme-toggle-mobile: 36px;
+    --theme-toggle-tablet: 48px;
+    --theme-toggle-desktop: 56px;
+    --container-mobile: 340px;
+    --container-desktop: 380px;
+    --container-max-desktop: 600px;
+    --stat-min-width: 70px;
+    --mode-button-min-width: 250px;
+    
+    /* Common Layout Dimensions */
+    --modal-min-width: 280px;
+    --modal-max-width: 400px;
+    --header-button-size: 32px;
+    --progress-bar-height: 8px;
+    --tooltip-size: 16px;
+    --fab-button-size: 56px;
+    
+    /* === COLOR VARIABLES - DEFAULT/LIGHT THEME === */
+    /* Main Background & Text */
+    --bg-main: linear-gradient(135deg, #1e3a8a, #06b6d4);
+    --bg-gradient-main: linear-gradient(135deg, #ff0080 0%, #ff8c00 25%, #ffd700 50%, #00bfff 75%, #764ba2 100%);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.8);
+    
+    /* Glass Effects - tuned for contrast on light theme */
+    --glass-bg: rgba(0, 0, 0, 0.35);
+    --glass-border: rgba(255, 255, 255, 0.4);
+    
+    /* UI Elements */
+    --logo-shadow: rgba(0, 0, 0, 0.2);
+    --footer-text: rgba(255, 255, 255, 0.6);
+    
+    /* Landing Page Buttons */
+    --button-classic-bg: #14b8a6;
+    --button-classic-dark: #0f766e;
+    --button-collection-bg: #8b5cf6;
+    --button-collection-dark: #6d28d9;
+    
+    /* Base Styles (from style.css :root) */
+    --padding-base: 8px;
+    --font-size-h1: 2.5em;
+    --font-size-score: 1.5em;
+    --border-radius-base: 8px;
+    --glass-blur: 8px;
+    --font-family-main: system-ui, -apple-system, 'Segoe UI', 'Poppins', Roboto, sans-serif;
+}
+
+/* Desktop Grid Override */
+@media (min-width: 769px) {
+    :root {
+        --grid-cell-size: 48px;
+        --header-button-size: 42px; /* desktop: larger action buttons like header */
+    }
+}
+
+body[data-theme="dark"] {
+    /* === DARK THEME OVERRIDES === */
+    --bg-main: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+    --bg-gradient-main: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%);
+    --text-primary: #e6f4ff;
+    --text-secondary: rgba(198, 230, 255, 0.78);
+    --glass-bg: rgba(12, 26, 48, 0.9);
+    --glass-border: rgba(135, 206, 235, 0.35);
+    --logo-shadow: rgba(10, 40, 80, 0.55);
+    --footer-text: rgba(168, 212, 255, 0.75);
+    --button-classic-bg: #1d4ed8;
+    --button-classic-dark: #0b2d6b;
+    --button-collection-bg: #6d28d9;
+    --button-collection-dark: #4c1d95;
+    --glass-blur: 12px;
+    /* Ghost piece outline for dark theme */
+    --ghost-fill-color: rgba(120,180,255,0.12);
+    --ghost-border-color: rgba(120,180,255,0.95);
+    --ghost-glow-color: rgba(120,180,255,0.55);
+}
+
+/* Ghost highlight outlines for placement preview */
+/* OPTIMIZATION: will-change për performancë më të mirë gjatë drag */
+.grid-cell.highlight,
+.grid-cell.invalid-highlight,
+.grid-cell.ghost {
+    will-change: background, box-shadow, opacity;
+}
+
+/* Light theme (default) uses spring green glow */
+body:not([data-theme="dark"]) .grid-cell.ghost {
+    background: linear-gradient(180deg, rgba(0,255,127,0.2), transparent) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,127,0.9), 0 0 14px rgba(0,255,127,0.6) !important;
+}
+/* Dark theme uses blue glow */
+body[data-theme="dark"] .grid-cell.ghost {
+    background: linear-gradient(180deg, rgba(120,180,255,0.12), transparent) !important;
+    box-shadow: 0 0 0 2px rgba(120,180,255,0.95), 0 0 14px rgba(120,180,255,0.55) !important;
+}
+
+/* Ghost styling for block wrapper (transparent overlay for placement preview) */
+.grid-cell-block.ghost {
+    will-change: background, box-shadow, opacity;
+    opacity: 0.5 !important;
+    border-radius: 25% !important;
+}
+
+body:not([data-theme="dark"]) .grid-cell-block.ghost {
+    /* Keep the filled-* color/design but make it semi-transparent */
+    opacity: 0.55 !important;
+    /* Add a green glow border to indicate valid placement */
+    box-shadow: 
+        0 0 0 2px rgba(0,255,127,0.9),
+        0 0 12px rgba(0,255,127,0.5) !important;
+}
+
+body[data-theme="dark"] .grid-cell-block.ghost {
+    /* Keep the filled-* color/design but make it semi-transparent */
+    opacity: 0.55 !important;
+    /* Add a blue glow border to indicate valid placement */
+    box-shadow: 
+        0 0 0 2px rgba(120,180,255,0.95),
+        0 0 12px rgba(120,180,255,0.5) !important;
+}

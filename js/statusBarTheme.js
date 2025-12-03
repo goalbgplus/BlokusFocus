@@ -1,0 +1,1 @@
+export async function applyStatusBar(theme){try{const S=window.Capacitor?.Plugins?.StatusBar;if(!S)return;if(theme==='dark'){await S.setStyle({style:'DARK'});await S.setBackgroundColor({color:'#0b0f1a'})}else{await S.setStyle({style:'LIGHT'});await S.setBackgroundColor({color:'#f2f5ff'})}}catch{}}

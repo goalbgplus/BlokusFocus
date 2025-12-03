@@ -1,0 +1,5 @@
+/* Global overrides for cleaned HTML inline styles */
+.galactic-ribbon.ribbon1 { top: 20%; }
+.galactic-ribbon.ribbon2 { top: 60%; animation-delay: -30s; }
+.pause-modal-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 18px; }
+/* Add to CSS bundle or link in index.html after theme files */

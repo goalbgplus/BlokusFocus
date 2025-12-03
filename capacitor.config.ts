@@ -1,0 +1,1 @@
+import { CapacitorConfig } from '@capacitor/cli'; const config:CapacitorConfig={appId:'com.goalbg.blokusgrid',appName:'Blokus Grid',webDir:'dist',bundledWebRuntime:false,server:{androidScheme:'https'}}; export default config;

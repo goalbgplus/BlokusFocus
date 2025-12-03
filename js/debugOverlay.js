@@ -1,0 +1,1 @@
+let e=new URLSearchParams(location.search).get('debug')==='1',t=null,a=0;export function initDebugOverlay(){if(!e||t)return;t=document.createElement('div');t.id='fpsOverlay';t.textContent='FPS: --';document.body.appendChild(t);let n=0,o=performance.now();const r=s=>{n++;if(s-o>=1000){t&&(t.textContent='FPS: '+n);n=0;o=s}a=requestAnimationFrame(r)};a=requestAnimationFrame(r)}

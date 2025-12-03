@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Filter Debug - Blokus</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0a0a;
+            color: #fff;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .header {
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+        .instructions {
+            background: #1a1a1a;
+            padding: 15px;
+            border-left: 3px solid #0ff;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section-title {
+            color: #00ff00;
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #00ff00;
+        }
+        .block-sample {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            margin: 10px 15px 10px 0;
+            border: 2px solid #444;
+            border-radius: 4px;
+            vertical-align: top;
+        }
+        .block-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-left: 3px solid #0ff;
+            border-radius: 4px;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+        .label {
+            color: #0ff;
+            font-weight: bold;
+        }
+        .value {
+            color: #fff;
+            word-break: break-all;
+        }
+        code {
+            background: #0a0a0a;
+            padding: 2px 6px;
+            border-radius: 2px;
+            color: #00ff00;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1200px;
+        }
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+        .grid-preview {
+            max-width: 400px;
+            height: auto;
+            background: #1a1a1a;
+            padding: 20px;
+            border: 2px solid #444;
+            border-radius: 8px;
+        }
+        .color-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 12px 24px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        button:hover {
+            background: #00cc00;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #888;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎨 Color Filter Debug Tool</h1>
+        <div class="instructions">
+            <strong>📋 Instructions:</strong><br>
+            1. Open the game in the iframe below<br>
+            2. Play a move or drag a piece<br>
+            3. Click "Analyze Colors" to compare styles<br>
+            4. Check the console for detailed output
+        </div>
+    </div>
+
+    <div class="container">
+        <div>
+            <div class="section-title">📺 Game Preview (Desktop)</div>
+            <iframe id="gameFrame" src="index.html" 
+                    style="width: 100%; height: 700px; border: 2px solid #444; border-radius: 8px;"></iframe>
+        </div>
+
+        <div>
+            <div class="section">
+                <div class="section-title">🎨 Color Samples</div>
+                <div class="color-row">
+                    <div class="block-sample" style="background: linear-gradient(135deg, #1a3a2d, #1f5a47);"></div>
+                    <div class="block-sample" style="background: linear-gradient(135deg, #2a1a3a, #5a1f47);"></div>
+                    <div class="block-sample" style="background: linear-gradient(135deg, #3a2a1a, #5a4a1f);"></div>
+                </div>
+                <div class="block-info">
+                    <div><span class="label">Colors:</span> filled-1 through filled-7</div>
+                    <div><span class="label">Current Filter:</span> <code>brightness(1.35) saturate(1.25) contrast(1.15)</code></div>
+                    <div><span class="label">Desktop:</span> Filter applied to piece-blocks and grid-cell-blocks</div>
+                    <div><span class="label">Mobile:</span> Filter + lightened grid container (rgba 0.08)</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">🔍 Debug Controls</div>
+                <button onclick="analyzeColors()">Analyze Colors</button>
+                <button onclick="checkFiltersMatch()">Check Filters Match</button>
+                <button onclick="exportDebugInfo()">Export Debug Info</button>
+            </div>
+
+            <div class="section">
+                <div class="section-title">📊 Analysis Results</div>
+                <div class="block-info" id="results">
+                    <div><span class="label">Status:</span> Click a button above to analyze</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        🔧 Debug tool v1.0 | Press F12 to open console for detailed logs
+    </div>
+
+    <script>
+        const resultsDiv = document.getElementById('results');
+        const gameFrame = document.getElementById('gameFrame');
+
+        function analyzeColors() {
+            resultsDiv.innerHTML = '<div class="label">⏳ Analyzing...</div>';
+            
+            setTimeout(() => {
+                try {
+                    if (gameFrame.contentWindow.compareAllBlockStyles) {
+                        gameFrame.contentWindow.compareAllBlockStyles();
+                        resultsDiv.innerHTML = `
+                            <div><span class="label">✅ Analysis complete</span></div>
+                            <div style="margin-top: 10px; color: #0f0;">Check browser console (F12) for detailed output</div>
+                        `;
+                    } else {
+                        resultsDiv.innerHTML = '<div style="color: #f00;">⚠️ compareAllBlockStyles not found. Reload game.</div>';
+                    }
+                } catch (e) {
+                    resultsDiv.innerHTML = `<div style="color: #f00;">❌ Error: ${e.message}</div>`;
+                }
+            }, 100);
+        }
+
+        function checkFiltersMatch() {
+            resultsDiv.innerHTML = '<div class="label">⏳ Checking...</div>';
+            
+            setTimeout(() => {
+                try {
+                    const game = gameFrame.contentWindow;
+                    
+                    // Get a piece block
+                    const pieceBlock = game.document.querySelector('.pieces-container .piece-block');
+                    // Get a grid block
+                    const gridBlock = game.document.querySelector('.game-grid .grid-cell-block[class*="filled-"]');
+                    // Get a clone block
+                    const cloneBlock = game.document.querySelector('.dragged-piece-clone .piece-block');
+
+                    let html = '<div style="color: #0f0;">';
+                    
+                    if (pieceBlock) {
+                        const pFilter = game.getComputedStyle(pieceBlock).filter;
+                        html += `<div>🎮 Piece Block Filter: <code>${pFilter}</code></div>`;
+                    } else {
+                        html += '<div style="color: #f90;">⚠️ No piece block found</div>';
+                    }
+
+                    if (gridBlock) {
+                        const gFilter = game.getComputedStyle(gridBlock).filter;
+                        html += `<div>📍 Grid Block Filter: <code>${gFilter}</code></div>`;
+                    } else {
+                        html += '<div style="color: #f90;">⚠️ No grid block found (play a move first)</div>';
+                    }
+
+                    if (cloneBlock) {
+                        const cFilter = game.getComputedStyle(cloneBlock).filter;
+                        html += `<div>🎯 Clone Block Filter: <code>${cFilter}</code></div>`;
+                    } else {
+                        html += '<div style="color: #f90;">⚠️ No clone block found (drag a piece first)</div>';
+                    }
+
+                    if (pieceBlock && gridBlock && pieceBlock === gridBlock) {
+                        html += '<div style="color: #f00;">❌ Filters DIFFERENT - need fix</div>';
+                    } else if (pieceBlock && gridBlock) {
+                        const pFilter = game.getComputedStyle(pieceBlock).filter;
+                        const gFilter = game.getComputedStyle(gridBlock).filter;
+                        if (pFilter === gFilter) {
+                            html += '<div style="color: #0f0;">✅ Filters MATCH!</div>';
+                        } else {
+                            html += `<div style="color: #f00;">❌ Filters DIFFERENT</div>`;
+                        }
+                    }
+
+                    html += '</div>';
+                    resultsDiv.innerHTML = html;
+                } catch (e) {
+                    resultsDiv.innerHTML = `<div style="color: #f00;">❌ Error: ${e.message}</div>`;
+                }
+            }, 100);
+        }
+
+        function exportDebugInfo() {
+            const game = gameFrame.contentWindow;
+            const info = {
+                timestamp: new Date().toISOString(),
+                userAgent: navigator.userAgent,
+                viewport: {
+                    width: game.innerWidth,
+                    height: game.innerHeight
+                },
+                blocks: {
+                    inventoryCount: game.document.querySelectorAll('.pieces-container .piece-block').length,
+                    gridCount: game.document.querySelectorAll('.game-grid .grid-cell-block[class*="filled-"]').length,
+                    cloneCount: game.document.querySelectorAll('.dragged-piece-clone .piece-block').length
+                }
+            };
+            
+            const json = JSON.stringify(info, null, 2);
+            resultsDiv.innerHTML = `<div style="color: #0f0;"><pre>${json}</pre></div>`;
+            
+            console.log('Debug Info:', info);
+        }
+    </script>
+</body>
+</html>

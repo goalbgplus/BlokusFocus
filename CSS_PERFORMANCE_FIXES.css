@@ -1,0 +1,126 @@
+/* 
+ * OPTIMIZED MOBILE CSS - Phase 1 Performance Fixes
+ * Replace existing css/style.css backdrop-filter declarations with these
+ * 
+ * Changes:
+ * 1. Removed all backdrop-filter: blur() declarations
+ * 2. Replaced with high-opacity backgrounds + borders
+ * 3. Simplified box-shadows to single layer where possible
+ * 4. Added will-change for animated elements
+ */
+
+/* ✅ SETTINGS MODAL - Remove blur, use opaque background */
+.settings-modal-content {
+    background: rgba(24, 24, 24, 0.98) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    /* Removed: backdrop-filter: blur(4px) saturate(110%); */
+    /* Removed: -webkit-backdrop-filter: blur(4px) saturate(110%); */
+}
+
+/* ✅ GLASS EFFECT - Use gradient + border instead of blur */
+.glass-effect {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.15);
+    /* Removed: backdrop-filter: blur(4px); */
+}
+
+/* ✅ GAME OVERLAY - Opaque overlay instead of blur */
+.game-overlay-inner {
+    background: rgba(0, 0, 0, 0.88);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    /* Removed: backdrop-filter: blur(12px) brightness(110%); */
+    /* Removed: -webkit-backdrop-filter: blur(12px) brightness(110%); */
+}
+
+/* ✅ PAUSE OVERLAY - Remove full-page blur */
+body.paused::before {
+    background: rgba(0, 0, 0, 0.35);
+    /* Removed: filter: blur(3px); - was causing full viewport repaint */
+}
+
+/* ✅ ACTIVE MODE BUTTONS - Simplified shadow, use transform for feedback */
+.action-btn.active-mode {
+    box-shadow: 0 0 16px rgba(255, 215, 0, 0.5); /* Single layer instead of 3 */
+    transform: scale(1.02);
+    will-change: transform, box-shadow;
+    transition: all 0.15s ease-out;
+}
+
+/* ✅ HIGHLIGHT STATE - Simplified for drag updates */
+.grid-cell-block.highlight {
+    box-shadow: 0 0 12px rgba(255, 215, 0, 0.5); /* From 3 layers to 1 */
+    will-change: box-shadow;
+}
+
+/* ✅ HOVER STATES - Reduce shadow complexity */
+button:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    /* Removed complex multi-layer shadows */
+}
+
+/* ✅ FLOATING ELEMENTS - Use opacity + transform (composite-only) */
+.floating-score {
+    will-change: transform, opacity;
+    transform: translateZ(0); /* Force hardware acceleration */
+}
+
+/* ✅ COMBO MESSAGE - Animate via transform not size */
+@keyframes combo-pop {
+    0% {
+        transform: scale(0.8) translateY(10px);
+        opacity: 0;
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1) translateY(-30px);
+        opacity: 0;
+    }
+}
+
+#comboMessage {
+    animation: combo-pop 0.6s ease-out forwards;
+    will-change: transform, opacity;
+}
+
+/* ✅ DRAGGED PIECE - Hardware acceleration */
+#draggedPieceClone {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+/* ✅ REMOVE expensive shadows from frequently updated elements */
+.grid-cell-block {
+    /* Removed: complex inset + drop shadows */
+    box-shadow: none;
+}
+
+.grid-cell-block.filled-1,
+.grid-cell-block.filled-2,
+.grid-cell-block.filled-3,
+.grid-cell-block.filled-4,
+.grid-cell-block.filled-5,
+.grid-cell-block.filled-6,
+.grid-cell-block.filled-7 {
+    /* Use only color/gradient, let CSS do the visual work */
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.1);
+    /* Removed: multiple drop shadows */
+}
+
+/* ✅ PIECE BLOCK - Keep light, no heavy shadows */
+.piece-block {
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08);
+    /* Removed: expensive drop shadows */
+}
+
+/* ✅ ENSURE GAME GRID stays optimized */
+.game-grid {
+    will-change: auto; /* Only set when actively dragging */
+}
+
+.game-grid.dragging {
+    will-change: contents;
+}

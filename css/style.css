@@ -1,0 +1,1334 @@
+﻿/* Hide original piece in container when dragging */
+.piece.dragging {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+/* Base styles - main variables now in themes.css */
+
+.settings-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    pointer-events: auto;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.settings-modal-content {
+    background: rgba(24, 24, 24, 0.98);
+    color: #fffbe6;
+    border-radius: 18px;
+    padding: 32px 24px 24px 24px;
+    min-width: var(--modal-min-width);
+    max-width: 90vw;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: stretch;
+    pointer-events: auto;
+    z-index: 1001;
+}
+.settings-modal-content h2 {
+    margin: 0 0 12px 0;
+    font-size: 1.4em;
+    text-align: center;
+    color: #ffd700;
+}
+.settings-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 1.1em;
+    padding: 8px 0;
+    border-bottom: 1px solid #333;
+}
+.settings-option:last-child {
+    border-bottom: none;
+}
+.settings-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: none;
+    border: none;
+    color: #ffd700;
+    font-size: 2em;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.settings-close:hover {
+    color: #fffbe6;
+}
+/* Animacion pulsimi kur fiton pikë */
+@keyframes score-pulse {
+    0% {
+        transform: scale(1);
+        text-shadow: 0 1px 4px rgba(255, 251, 230, 0.4);
+    }
+
+    50% {
+        transform: scale(1.08);
+        text-shadow: 0 6px 18px rgba(255, 251, 230, 0.8);
+    }
+
+    100% {
+        transform: scale(1);
+        text-shadow: 0 2px 8px #fffbe6, 0 1px 0 #fff;
+    }
+}
+.score-pulse {
+    animation: score-pulse 0.5s cubic-bezier(0.4,0,0.2,1);
+}
+/* QENDRIMI DHE STILIZIMI I PIKËVE AKTUALE NË QENDËR */
+.center-score-wrapper {
+    /* Static flow: center score between header and grid */
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+.center-score { /* wrapper for crystal-style score display */
+    display: flex;
+    justify-content: center;
+    padding: 8px 14px; /* space that previously came from negative inset */
+    position: relative; /* enable glass overlays */
+    isolation: isolate; /* create stacking context for safe z-index layering */
+    border-radius: 16px; /* clip radius for glass */
+    overflow: hidden; /* keep sheen inside */
+}
+
+/* Glassmorphism panel for score */
+.center-score::before {
+    content: '';
+    position: absolute;
+    inset: 0; /* fill container */
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+    border: 1px solid rgba(255,255,255,0.22);
+    border-radius: inherit;
+    box-shadow:
+        0 5px 15px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255,255,255,0.2);
+    z-index: 0; /* behind the number */
+}
+
+/* Soft highlight sheen moving across the glass */
+.center-score::after {
+    content: '';
+    position: absolute;
+    top: -10%;
+    left: -40%; /* start off further left so edges don't peek */
+    width: 70%;
+    height: 140%;
+    transform: rotate(12deg);
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%);
+    filter: blur(3px);
+    /* removed mix-blend-mode for better performance */
+    z-index: 1;
+    animation: scoreSheen 7s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes scoreSheen {
+  0% { left: -40%; opacity: 0.0; }
+  20% { opacity: 0.55; }
+  50% { left: 85%; opacity: 0.35; }
+  80% { opacity: 0.6; }
+  100% { left: 110%; opacity: 0.0; }
+}
+
+/* Ensure the digits render above the glass layers */
+.center-score .score-display {
+    position: relative;
+    z-index: 2;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .center-score::after { animation: none; opacity: 0.35; }
+}
+.score-display {
+    font-family: 'Nunito', sans-serif;
+    font-size: 3.5rem; /* base (desktop small) */
+    font-weight: 900;
+    line-height: 1;
+    background: var(--score-gradient, linear-gradient(135deg, #FFD700, #FBBF24, #FFA500));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 0 rgba(255,255,255,0.06), 0 6px 18px rgba(0,0,0,0.28), 0 0 18px var(--score-glow, rgba(255,215,0,0.35));
+    -webkit-text-stroke: 0.6px rgba(0,0,0,0.25);
+    position: relative;
+    transition: transform 0.18s ease-out, font-size 0.18s ease;
+    margin: 12px 0;
+}
+
+@keyframes score-pop {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.12); }
+    100% { transform: scale(1); }
+}
+.score-animated {
+    animation: score-pop 0.3s ease-out;
+}
+.score-display::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.5) 18%,
+    transparent 45%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transform: skewX(-12deg) translateX(4px);
+}
+
+/* Responsive score sizing: mobile / tablet / desktop */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .score-display { font-size: 3.2rem; margin: 12px 0; }
+}
+@media (min-width: 1025px) {
+    .score-display { font-size: 4.8rem; margin: 14px 0; }
+}
+
+.game-over-score p {
+    margin: 5px 0;
+    font-size: 1.1em;
+    color: #fffbe6;
+}
+/* 🤖 AI HINT SYSTEM STYLES */
+.grid-cell.hint-highlight {
+    animation: hint-pulse 1.5s ease-in-out;
+    border: 2px solid var(--hint-border-color, #FFD700);
+    box-shadow: 0 0 15px var(--hint-glow-color, rgba(255, 215, 0, 0.7));
+    z-index: 10;
+}
+
+/* AI Hint Type Classifications */
+.grid-cell.hint-best {
+    --hint-border-color: #00FF7F; /* Spring Green */
+    --hint-glow-color: rgba(0, 255, 127, 0.8);
+    background: linear-gradient(135deg, rgba(0, 255, 127, 0.3), rgba(0, 255, 127, 0.1));
+}
+
+.grid-cell.hint-combo {
+    --hint-border-color: #FF4500; /* Orange Red */
+    --hint-glow-color: rgba(255, 69, 0, 0.8);
+    background: linear-gradient(135deg, rgba(255, 69, 0, 0.3), rgba(255, 69, 0, 0.1));
+    animation: hint-combo-pulse 1.2s ease-in-out infinite;
+}
+
+.grid-cell.hint-good {
+    --hint-border-color: #1E90FF; /* Dodger Blue */
+    --hint-glow-color: rgba(30, 144, 255, 0.8);
+    background: linear-gradient(135deg, rgba(30, 144, 255, 0.3), rgba(30, 144, 255, 0.1));
+}
+
+.grid-cell.hint-defensive {
+    --hint-border-color: #9370DB; /* Medium Purple */
+    --hint-glow-color: rgba(147, 112, 219, 0.8);
+    background: linear-gradient(135deg, rgba(147, 112, 219, 0.3), rgba(147, 112, 219, 0.1));
+}
+
+.grid-cell.hint-safe {
+    --hint-border-color: #FFB347; /* Peach */
+    --hint-glow-color: rgba(255, 179, 71, 0.8);
+    background: linear-gradient(135deg, rgba(255, 179, 71, 0.3), rgba(255, 179, 71, 0.1));
+}
+
+.grid-cell.hint-ok {
+    --hint-border-color: #FFD700; /* Gold */
+    --hint-glow-color: rgba(255, 215, 0, 0.7);
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+}
+
+/* AI Hint Animations */
+@keyframes hint-pulse {
+    0% { 
+        transform: scale(1); 
+        opacity: 0.7;
+    }
+    50% { 
+        transform: scale(1.05); 
+        opacity: 1;
+        box-shadow: 0 0 25px var(--hint-glow-color);
+    }
+    100% { 
+        transform: scale(1); 
+        opacity: 0.9;
+    }
+}
+
+@keyframes hint-combo-pulse {
+    0%, 100% { 
+        transform: scale(1);
+        box-shadow: 0 0 15px var(--hint-glow-color);
+    }
+    50% { 
+        transform: scale(1.08);
+        box-shadow: 0 0 30px var(--hint-glow-color), 0 0 40px rgba(255, 69, 0, 0.4);
+    }
+}
+
+/* Piece Unlock Notifications */
+.unlock-notification {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: 3px solid #ffd700;
+    border-radius: 15px;
+    padding: 30px;
+    max-width: var(--modal-max-width);
+    z-index: 10000;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.unlock-notification.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.unlock-notification.unlock-bronze {
+    background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+    border-color: #cd7f32;
+}
+
+.unlock-notification.unlock-silver {
+    background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
+    border-color: #c0c0c0;
+}
+
+.unlock-notification.unlock-gold {
+    background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+    border-color: #ffd700;
+}
+
+.unlock-notification.unlock-platinum {
+    background: linear-gradient(135deg, #e5e4e2 0%, #b38b6d 100%);
+    border-color: #e5e4e2;
+}
+
+.unlock-content h3 {
+    margin: 0 0 15px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.unlock-content p {
+    margin: 0;
+    font-size: 18px;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    line-height: 1.4;
+}
+
+/* Unlock Progress Indicator */
+.unlock-progress {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    /* Glassmorphism style - optimized without blur */
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    padding: 24px;
+    text-align: center;
+    z-index: 10000 !important;
+    min-width: var(--modal-min-width);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.25);
+}
+
+.unlock-progress h4 {
+    color: #FFD700;
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.progress-bar {
+    width: 100%;
+    height: var(--progress-bar-height);
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FFA500);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    color: #FFFFFF;
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+/* Unlock Notifications */
+
+.action-buttons {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 1000;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    padding: 16px 12px;
+    background: transparent;
+    backdrop-filter: none;
+    border-top: none;
+}
+
+.action-buttons button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 6px;
+    border-radius: 12px;
+    
+    /* Glass card effect - optimized without blur */
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.18) 0%, 
+        rgba(255, 255, 255, 0.08) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        inset 0 -2px 2px rgba(0, 0, 0, 0.1);
+    
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-family-main);
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.32, 0.08, 0.24, 1);
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+}
+
+/* Ikonat dhe teksti */
+.action-buttons button i {
+    font-size: 20px;
+    margin-bottom: 4px;
+    transition: all 0.4s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Efekti hover spektakular */
+.action-buttons button:not(:disabled):hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.25) 0%, 
+        rgba(200, 220, 255, 0.15) 100%);
+    transform: translateY(-6px);
+    box-shadow: 
+        0 12px 30px rgba(80, 120, 255, 0.3),
+        inset 0 2px 4px rgba(255, 255, 255, 0.3),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Efekti i ndezjes */
+.action-buttons button:not(:disabled):hover i {
+    transform: scale(1.25) translateY(-2px);
+    filter: drop-shadow(0 2px 4px rgba(100, 150, 255, 0.5));
+}
+
+/* Butonat e Ã§aktivizuar */
+.action-buttons button:disabled {
+    background: rgba(50, 50, 70, 0.15);
+    color: rgba(255, 255, 255, 0.25);
+    cursor: not-allowed;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(4px);
+}
+
+/* Badge me efekt qelqi */
+.action-buttons button span {
+    font-size: 10px;
+    font-weight: 900;
+    line-height: 1;
+    background: #ff4757 !important;
+    color: white !important;
+    border-radius: 50%;
+    padding: 0;
+    width: var(--tooltip-size);
+    height: var(--tooltip-size);
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    border: 2px solid white;
+    box-shadow: 
+        0 2px 8px rgba(255, 71, 87, 0.9),
+        0 1px 3px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 999 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    text-shadow: none;
+    font-family: 'Arial', sans-serif !important;
+    pointer-events: none;
+}
+
+/* Efekti hover pÃ«r badge */
+.action-buttons button:not(:disabled):hover span {
+    transform: scale(1.2) translate(1px, -1px);
+    box-shadow: 
+        0 4px 12px rgba(255, 71, 87, 1),
+        0 2px 6px rgba(0, 0, 0, 0.8);
+    background: #ff3742 !important;
+}
+
+/* Rreze ndriÃ§imi nÃ« hover */
+.action-buttons button::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, 
+        rgba(255, 255, 255, 0.4) 0%, 
+        transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.action-buttons button:not(:disabled):hover::after {
+    opacity: 0.6;
+}
+
+/* body background and animated gradients have been moved to game-background.css */
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+#landingPage.fade-out {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* Panel Animations moved into game-ui.css */
+/* Animacion i përmirësuar për pjesët e vendosura: efekt 'pop' fluid dhe elastik */
+
+.header-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; /* Reduced from 15px */
+    margin: 12px 0 8px 0; /* Center header-controls; horizontal margins removed */
+    padding-top: 8px; /* Added small top padding */
+}
+
+.top-row-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: calc(100% - 16px); /* Reduced width to account for margins */
+    max-width: var(--modal-max-width); /* Added max-width for better control */
+    gap: 12px; /* Slightly increased gap */
+    flex-wrap: nowrap;
+    margin: 0 auto; /* Center the controls */
+}
+
+/* Header Button Styles - ONLY for game page, NOT landing page - ENHANCED SPECIFICITY */
+.game-container .header-controls .top-row-controls button,
+body:not(.landing-page) .header-controls .top-row-controls button {
+    /* Modern glassmorphism design - optimized without blur */
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.18) 0%,  /* Increased from 0.15 */
+        rgba(255, 255, 255, 0.08) 100%) !important; /* Increased from 0.05 */
+    border: 1px solid rgba(255, 255, 255, 0.25) !important; /* Increased from 0.2 */
+    border-radius: 12px !important;
+    padding: 6px 8px !important;
+    color: rgba(255, 255, 255, 0.95) !important; /* Increased from 0.9 */
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.32, 0.08, 0.24, 1) !important;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        0 0 10px rgba(255, 255, 255, 0.05) !important;
+    position: relative !important;
+    overflow: hidden !important;
+    min-width: var(--header-button-size) !important;
+    height: var(--header-button-size) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    will-change: transform, background !important;
+}
+/* Hide header buttons marked hidden */
+/* Visible state with smooth fade */
+.top-row-controls .header-btn {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+}
+/* Hide header buttons marked hidden via opacity and disable pointer events */
+.top-row-controls .header-btn.hidden {
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+/* Smooth fade for restart button */
+
+/* Shine effect - Enhanced for better visibility - ONLY game page - ENHANCED SPECIFICITY */
+.game-container .header-controls .top-row-controls button::before,
+body:not(.landing-page) .header-controls .top-row-controls button::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: -100% !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.25), /* Increased opacity from 0.15 to 0.25 */
+        rgba(255, 255, 255, 0.4),  /* Added middle peak */
+        rgba(255, 255, 255, 0.25),
+        transparent) !important;
+    transition: left 0.6s ease !important;
+    z-index: 1 !important; /* Ensure shine is above background but below icon */
+    pointer-events: none !important; /* Prevent interference with clicks */
+}
+
+/* Hover Effects - Enhanced glassmorphism - ONLY game page - ENHANCED SPECIFICITY */
+.game-container .header-controls .top-row-controls button:hover,
+body:not(.landing-page) .header-controls .top-row-controls button:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.3) 0%,   /* Increased from 0.25 */
+        rgba(255, 255, 255, 0.2) 100%) !important; /* Increased from 0.15 */
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 
+        0 8px 25px rgba(0, 0, 0, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4), /* Increased from 0.3 */
+        0 0 20px rgba(255, 255, 255, 0.15) !important;       /* Increased glow */
+    border-color: rgba(255, 255, 255, 0.4) !important;      /* Increased from 0.35 */
+    backdrop-filter: blur(15px) !important;                  /* Increased blur */
+    -webkit-backdrop-filter: blur(15px) !important;
+}
+
+.game-container .header-controls .top-row-controls button:hover::before,
+body:not(.landing-page) .header-controls .top-row-controls button:hover::before {
+    left: 100% !important;
+    /* Ensure shine animation triggers properly */
+}
+
+.game-container .header-controls .top-row-controls button:hover i,
+body:not(.landing-page) .header-controls .top-row-controls button:hover i {
+    transform: scale(1.1) !important;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6)) !important; /* Increased glow */
+    z-index: 2 !important; /* Ensure icon stays above shine */
+}
+/* When restart button is visible, fade in opacity */
+
+/* Active/Click Effects - ONLY game page */
+.game-container .top-row-controls button:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 
+        0 4px 15px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1),
+        0 0 25px rgba(0, 191, 255, 0.8),
+        0 0 50px rgba(0, 191, 255, 0.6),
+        0 0 75px rgba(0, 191, 255, 0.4);
+    border-color: rgba(0, 191, 255, 0.8);
+    background: linear-gradient(135deg, 
+        rgba(0, 191, 255, 0.3) 0%, 
+        rgba(0, 191, 255, 0.1) 100%);
+}
+
+.game-container .top-row-controls button:active i {
+    color: #00BFFF;
+    text-shadow: 
+        0 0 10px rgba(0, 191, 255, 0.8),
+        0 0 20px rgba(0, 191, 255, 0.6),
+        0 0 30px rgba(0, 191, 255, 0.4);
+    transform: scale(1.15);
+}
+
+/* Neon click animation */
+@keyframes neonPulse {
+    0% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1),
+            0 0 25px rgba(0, 191, 255, 0.8),
+            0 0 50px rgba(0, 191, 255, 0.6);
+    }
+    50% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1),
+            0 0 35px rgba(0, 191, 255, 1),
+            0 0 70px rgba(0, 191, 255, 0.8),
+            0 0 100px rgba(0, 191, 255, 0.6);
+    }
+    100% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    }
+}
+
+/* Special neon animation for theme toggle button */
+@keyframes neonPulseGold {
+    0% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1),
+            0 0 25px rgba(255, 215, 0, 0.8),
+            0 0 50px rgba(255, 215, 0, 0.6);
+        border-color: rgba(255, 215, 0, 0.4);
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.25) 0%, 
+            rgba(255, 255, 255, 0.15) 100%);
+    }
+    50% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1),
+            0 0 35px rgba(255, 215, 0, 1),
+            0 0 70px rgba(255, 215, 0, 0.8),
+            0 0 100px rgba(255, 215, 0, 0.6);
+        border-color: rgba(255, 215, 0, 0.8);
+        background: linear-gradient(135deg, 
+            rgba(255, 215, 0, 0.2) 0%, 
+            rgba(255, 215, 0, 0.1) 100%);
+    }
+    100% {
+        box-shadow: 
+            0 4px 15px rgba(0, 0, 0, 0.15),
+            inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.15) 0%, 
+            rgba(255, 255, 255, 0.05) 100%);
+    }
+}
+
+.game-container .top-row-controls button.neon-clicked {
+    animation: neonPulse 0.4s ease-out forwards;
+}
+
+.theme-toggle.neon-clicked {
+    animation: neonPulseGold 0.4s ease-out forwards;
+}
+
+/* Disabled State - ONLY game page */
+.game-container .top-row-controls button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, 
+        rgba(100, 100, 100, 0.15) 0%, 
+        rgba(100, 100, 100, 0.05) 100%);
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.game-container .top-row-controls button:disabled:hover {
+    transform: none;
+    box-shadow: 
+        0 4px 16px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Icon Styling - ONLY game page */
+.game-container .top-row-controls button i {
+    font-size: 16px;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* MEDIA QUERIES FOR GAME PAGE HEADER BUTTONS - HIGH PRIORITY */
+
+/* Tablet size - increase game page header buttons */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .game-container .header-controls .top-row-controls button,
+    body:not(.landing-page) .header-controls .top-row-controls button {
+        min-width: var(--theme-toggle-tablet) !important;
+        width: var(--theme-toggle-tablet) !important;
+        height: var(--theme-toggle-tablet) !important;
+        padding: 8px 10px !important;
+        font-size: 20px !important;
+    }
+    
+    .game-container .top-row-controls button i {
+        font-size: 20px !important;
+    }
+}
+
+/* Desktop size - increase game page header buttons */
+@media (min-width: 1025px) {
+    .game-container .header-controls .top-row-controls button,
+    body:not(.landing-page) .header-controls .top-row-controls button {
+        min-width: var(--theme-toggle-desktop) !important;
+        width: var(--theme-toggle-desktop) !important;
+        height: var(--theme-toggle-desktop) !important;
+        padding: 10px 12px !important;
+        font-size: 22px !important;
+    }
+    
+    .game-container .top-row-controls button i {
+        font-size: 22px !important;
+    }
+}
+.game-buttons { 
+    display: flex; 
+    gap: 8px; /* Slightly reduced gap */
+    flex-shrink: 0; /* Prevent shrinking */
+}
+.score-info {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-grow: 1; /* Added to allow flexible width */
+    /* Removed width: 100% and flex-wrap: wrap */
+}
+.score-container, .high-score-container {
+    font-size: var(--font-size-score);
+    color: var(--gold-text-color);
+    text-shadow: var(--gold-text-shadow);
+    background: transparent; /* Made background transparent */
+    padding: 8px 15px;
+    border-radius: 5px;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+.score-icon {
+    color: var(--gold-text-color);
+    text-shadow: var(--gold-text-shadow);
+}
+
+button:not(.fab-main):not(.fab-option):not(.mode-button) {
+    /* Modern glassmorphism design - optimized without blur */
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.18) 0%, 
+        rgba(255, 255, 255, 0.08) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+    
+    padding: 12px 24px;
+    border-radius: 12px;
+    /* Reduced padding to make buttons less wide */
+    padding: 6px 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-family: var(--font-family-main);
+    font-weight: 600;
+    cursor: pointer;
+    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
+    position: relative;
+    overflow: hidden;
+    outline: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    will-change: transform, background;
+}
+
+button:not(.fab-main):not(.fab-option):not(.mode-button)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+button i { 
+    font-size: 1.1em; 
+}
+
+button:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.1) 100%);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 
+        0 6px 24px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: linear-gradient(145deg, #555, #888);
+}
+/* NEW: Improved focus states for accessibility */
+button:focus-visible {
+    outline: 3px solid var(--focus-outline-color);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgba(var(--focus-outline-color), 0.3);
+}
+
+.game-buttons button {
+    /* Modern glassmorphism design - optimized without blur */
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.18) 0%, 
+        rgba(255, 255, 255, 0.08) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 
+        0 8px 32px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 4px 16px rgba(0, 0, 0, 0.2);
+    
+    padding: 6px; /* Reduced from 8px */
+    width: var(--header-button-size); /* Reduced from 42px */
+    height: var(--header-button-size); /* Reduced from 42px */
+    border-radius: 10px; /* Slightly reduced */
+    font-size: 14px; /* Added to control icon size */
+    
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateZ(0);
+    position: relative;
+    overflow: hidden;
+    will-change: transform, background;
+}
+
+.game-buttons button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.1), 
+        transparent);
+    transition: left 0.6s ease;
+}
+
+.game-buttons button:hover {
+    background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        rgba(255, 255, 255, 0.1) 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 
+        0 12px 40px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        0 6px 20px rgba(0, 0, 0, 0.25);
+}
+
+.game-buttons button:hover::before {
+    left: 100%;
+}
+
+.game-buttons button:active {
+    transform: translateY(-1px) scale(0.95);
+    box-shadow: 
+        0 6px 24px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 3px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Media queries for game-buttons - Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .game-buttons button {
+        width: var(--theme-toggle-tablet) !important;
+        height: var(--theme-toggle-tablet) !important;
+        font-size: 18px !important;
+        padding: 8px !important;
+    }
+}
+
+/* Media queries for game-buttons - Desktop */
+@media (min-width: 1025px) {
+    .game-buttons button {
+        width: var(--theme-toggle-desktop) !important;
+        height: var(--theme-toggle-desktop) !important;
+        font-size: 20px !important;
+        padding: 10px !important;
+    }
+}
+
+.game-overlay { /* Landing Page - full screen */
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 100vw; 
+    height: 100vh;
+    background: transparent; /* Transparent to show body gradient */
+    display: flex; 
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;
+    z-index: 1002;
+    color: var(--text); 
+    opacity: 1; 
+    visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    border-radius: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.game-overlay > * {
+    flex-shrink: 0;
+}
+
+.game-overlay-inner { /* Game Over - inside game-container */
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    z-index: 100;
+    opacity: 1; visibility: visible;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    background: rgba(10, 15, 25, 0.88);
+    box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+.game-overlay-inner.hidden {
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+
+.game-over-container {
+    position: relative;
+    width: 90%;
+    max-width: 380px;
+    text-align: center;
+}
+
+.game-over-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(112, 214, 255, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+    filter: blur(40px);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.game-over-title {
+    font-size: clamp(2rem, 8vw, 3.5rem);
+    font-weight: 900;
+    color: #fff;
+    margin: 0 0 24px 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(112, 214, 255, 0.6), 0 0 60px rgba(112, 214, 255, 0.3);
+    animation: titleGlow 2s ease-in-out infinite;
+}
+
+@keyframes titleGlow {
+    0%, 100% {
+        text-shadow: 0 0 20px rgba(112, 214, 255, 0.4), 0 0 40px rgba(112, 214, 255, 0.2);
+    }
+    50% {
+        text-shadow: 0 0 40px rgba(112, 214, 255, 0.8), 0 0 80px rgba(112, 214, 255, 0.4);
+    }
+}
+
+.game-over-content {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(112, 214, 255, 0.3);
+    border-radius: 16px;
+    padding: 28px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 0 40px rgba(112, 214, 255, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.score-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 500;
+}
+
+.score-value {
+    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, #70d6ff 0%, #00ff96 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(112, 214, 255, 0.3);
+}
+
+.score-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(112, 214, 255, 0.4), transparent);
+    margin: 4px 0;
+}
+
+.game-over-button {
+    background: linear-gradient(135deg, rgba(112, 214, 255, 0.3) 0%, rgba(0, 255, 150, 0.2) 100%);
+    border: 1.5px solid rgba(112, 214, 255, 0.5);
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(112, 214, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.game-over-button:hover {
+    background: linear-gradient(135deg, rgba(112, 214, 255, 0.5) 0%, rgba(0, 255, 150, 0.3) 100%);
+    border-color: rgba(112, 214, 255, 0.8);
+    box-shadow: 0 0 40px rgba(112, 214, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.game-over-button:active {
+    transform: translateY(0);
+}
+
+
+.particles-overlay {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 999;
+}
+.particle {
+    position: absolute;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.85;
+    box-shadow: none;  /* Removed glow effect per user request */
+}
+#particles-overlay {
+  position: fixed !important;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 9998;
+  overflow: visible;
+  contain: layout paint;
+  will-change: transform;
+}
+.combo-message {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3em; font-weight: bold;
+    color: var(--c4-start);
+    text-shadow: 0 0 10px rgba(0,0,0,0.8), 0 0 20px var(--c4-start);
+    opacity: 0; visibility: hidden;
+    pointer-events: none; z-index: 1000;
+}
+@keyframes combo-pop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+    30% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+    70% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+}
+.combo-message.show { animation: combo-pop 1s ease-out forwards; }
+
+.floating-score {
+    position: absolute;
+    color: var(--gold-text-color);
+    font-size: 1.5em; font-weight: bold;
+    text-shadow: var(--gold-text-shadow);
+    pointer-events: none; opacity: 0;
+    animation: float-up-fade-out 1.2s ease-out forwards;
+    z-index: 1001; white-space: nowrap;
+}
+@keyframes float-up-fade-out {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-50px) scale(0.8); opacity: 0; }
+}
+
+/* --- ANIMACIONE SPEKTAKOLARE DHE FEEDBACK VIZUAL --- */
+
+/* Efekt pÃ«r combo tÃ« larta (shkundje dhe shkÃ«lqim) */
+.combo-message.spectacular {
+    animation: spectacular-combo 1s cubic-bezier(0.4, 0, 0.2, 1);
+    color: var(--gold-text-color);
+    text-shadow: var(--gold-text-shadow), 0 0 20px #fff, 0 0 40px #ff0;
+    font-size: 2.5em;
+    letter-spacing: 2px;
+}
+@keyframes spectacular-combo {
+    0% { transform: scale(1) rotate(-2deg); opacity: 0.2; }
+    20% { transform: scale(1.2) rotate(2deg); opacity: 1; }
+    60% { transform: scale(1.1) rotate(-2deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Efekt pÃ«r floating score (rritje dhe zhdukje) */
+.floating-score.spectacular {
+    color: var(--gold-text-color);
+    text-shadow: var(--gold-text-shadow), 0 0 10px #fff;
+    font-size: 2em;
+    animation: floating-score-spectacular 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes floating-score-spectacular {
+    0% { transform: scale(1) translateY(0); opacity: 1; }
+    60% { transform: scale(1.3) translateY(-40px); opacity: 1; }
+    100% { transform: scale(1) translateY(-60px); opacity: 0; }
+}
+
+/* Media Queries */
+/* --- Row Deletion Pulse Animation from external design --- */
+
+/* --- DESIGN SNIPPET INTEGRATION --- */
+
+.particles-overlay {
+}
+
+/* Pozicionon kanavacën 3D si sfond fiks */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    outline: none;
+    z-index: -1; /* E vendos prapa përmbajtjes */
+}
+
+/* Stili për përmbajtjen që lëviz */
+#content {
+    position: relative;
+    z-index: 1;
+}
+
+section {
+    height: 100vh; /* Krijon lartësi për të lëvizur */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 0 5%;
+}
+
+section p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    line-height: 1.6;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+}
+
+.hero p {
+    margin-top: 20px;
+    animation: pulse 2s infinite alternate;
+}
+
+@keyframes pulse {
+    from { opacity: 0.5; }
+    to   { opacity: 1; }
+}
+
+ 
+
+.game-container {
+    transform: none !important;
+    perspective: none !important;
+    transform-style: flat !important;
+}
+
+body,
+html {
+    transform: none !important;
+}
+
+#piecesContainer,
+.pieces-container {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    /* Mund të rrisësh vlerën negative për ta afruar më shumë */
+}
+
+#specialActionsFooter {
+  position: fixed;
+  bottom: 20px;
+  left: 0;
+  width: 100%;
+  height: auto;
+  background: transparent;
+  z-index: 12000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: auto !important; /* Ensure footer remains interactive */
+}

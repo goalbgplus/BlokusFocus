@@ -1,0 +1,42 @@
+/* Desktop-specific overrides and layout refinements
+   This file is intentionally small. Move or add desktop-only rules here.
+   It is loaded only on screens >= 769px via media attribute in index.html.
+*/
+
+/* NOTE: Grid cell size override moved to themes.css @media rule */
+
+/* Slightly larger pieces container spacing on desktop */
+.pieces-container {
+    margin-top: 0.6rem;
+    justify-content: center !important;
+}
+
+/* Ensure game-grid does not use viewport-sized adjustments on desktop */
+.game-grid {
+    max-width: calc(var(--grid-cell-size) * 10 + var(--grid-gap) * 9 + 30px);
+}
+
+/* Make dragged clone match desktop sizing */
+.dragged-piece-clone .piece-block {
+    width: calc(var(--grid-cell-size) * 0.9) !important;
+    height: calc(var(--grid-cell-size) * 0.9) !important;
+}
+
+/* Landing page desktop overrides */
+@media (min-width: 769px) {
+    /* Re-center mode buttons within container */
+    body.landing-page .mode-list {
+        padding: 0 1rem;
+    }
+
+    /* Ensure tutorial modal fits viewport and grid is visible */
+    body.landing-page .modal-content.tutorial-modal {
+        max-width: 90vw;
+        width: auto;
+        margin: 0 1rem;
+    }
+    body.landing-page .tutorial-grid {
+        max-width: 100%;
+        width: auto;
+    }
+}

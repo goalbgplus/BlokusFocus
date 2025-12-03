@@ -1,0 +1,300 @@
+ :root { --ui-bg: rgba(0,0,0,.5); --ui-fg: #fff; }
+    .controls {
+      position: fixed; inset: 12px auto auto 12px;
+      display: flex; gap: 8px; z-index: 10;
+      background: var(--ui-bg); color: var(--ui-fg);
+      padding: 8px 10px; border-radius: 10px; backdrop-filter: blur(6px);
+    }
+    .controls button {
+      border: 0; padding: 6px 10px; border-radius: 8px; cursor: pointer;
+    }
+    .controls button[data-active="true"] { outline: 2px solid #fff; }
+
+    /* =========================
+       GAME CONTAINER – BASE
+       ========================= */
+    /* Disable game background animations on landing page */
+    body.landing-page .game-container .glow-effects,
+    body.landing-page .game-container .floating-pieces,
+    body.landing-page .game-container .stars,
+    body.landing-page .game-container .particles-overlay {
+        display: none !important;
+    }
+
+    /* Hide or simplify background animations when game is paused */
+    .game-container.paused .glow-effects,
+    .game-container.paused .floating-pieces,
+    .game-container.paused .stars,
+    .game-container.paused .particles-overlay {
+        display: none !important;
+    }
+    .game-container {
+        position: relative;
+        overflow: hidden;
+        min-height: 100vh;
+        isolation: isolate;         /* mbron stacking-un e brendshëm */
+        z-index: 0;                 /* konteks i qëndrueshëm */
+        background:
+            radial-gradient(circle at 15% 20%, rgba(255, 105, 180, 0.6) 0%, transparent 45%),
+            radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.7) 0%, transparent 45%),
+            radial-gradient(circle at 40% 85%, rgba(0, 191, 255, 0.7) 0%, transparent 45%),
+            radial-gradient(circle at 65% 25%, rgba(138, 43, 226, 0.7) 0%, transparent 45%),
+            linear-gradient(135deg, #ff0080, #ff8c00, #ffd700, #00bfff);
+    }
+
+    /* DARK MODE (me atribut në body) */
+    body[data-theme="dark"] .game-container {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(135, 206, 235, 0.3) 0%, transparent 45%),
+            radial-gradient(circle at 80% 70%, rgba(100, 149, 237, 0.4) 0%, transparent 45%),
+            radial-gradient(circle at 40% 85%, rgba(72, 61, 139, 0.4) 0%, transparent 45%),
+            radial-gradient(circle at 65% 25%, rgba(25, 25, 112, 0.5) 0%, transparent 45%),
+            linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #16213e);
+    }
+
+    /* Shkallëzo opacitetin e vijave kur ka UI sipër (opsionale) */
+    .game-container.has-ui::before { opacity: .04; }
+
+    /* Diagonal stripe overlay */
+    .game-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background:
+            repeating-linear-gradient(45deg,
+                rgba(255, 255, 255, 0.1) 0px,
+                rgba(255, 255, 255, 0.1) 2px,
+                transparent 2px,
+                transparent 4px),
+            repeating-linear-gradient(-45deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 2px,
+                transparent 2px,
+                transparent 4px);
+        pointer-events: none;
+        z-index: -3;
+    }
+
+    /* Center glow overlay */
+    .game-container .overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.15) 0%, transparent 80%);
+        pointer-events: none;
+        z-index: -1;
+    }
+
+    /* Glow effects */
+    .game-container .glow-effects {
+        position: absolute; inset: 0; pointer-events: none; z-index: -4;
+    }
+    .game-container .glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(70px);
+        opacity: 0.7;
+        animation: glow-move 20s infinite alternate ease-in-out;
+        width: clamp(150px, 20vw, 450px);
+        height: clamp(150px, 20vw, 450px);
+        will-change: transform, opacity;
+        contain: layout style paint;
+    }
+    .game-container .glow:nth-child(1) { background: rgba(255, 20, 147, 0.5); top: 10%; left: 10%; animation-delay: 0s; }
+    .game-container .glow:nth-child(2) { background: rgba(255, 215, 0, 0.5); bottom: 15%; right: 15%; animation-delay: 5s; }
+    .game-container .glow:nth-child(3) { background: rgba(0, 191, 255, 0.5); top: 40%; left: 30%; animation-delay: 10s; }
+
+    /* Floating pieces wrapper */
+    .game-container .floating-pieces {
+        position: absolute; inset: 0; pointer-events: none; z-index: -2;
+    }
+
+    /* Puzzle piece – bazë responsive me clamp() */
+    .game-container .puzzle-piece {
+        position: absolute;
+        width: clamp(35px, 6vw, 90px);
+        height: clamp(35px, 6vw, 90px);
+        border-radius: clamp(8px, 1vw, 18px);
+        background: rgba(255, 255, 255, 0.2);
+        transform: rotate(45deg);
+        animation: float 18s infinite ease-in-out;
+        box-shadow:
+            0 10px 35px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.25),
+            0 0 30px rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        overflow: hidden;
+        will-change: transform, opacity;
+        contain: layout style paint;
+    }
+
+    /* Backdrop-filter fallback */
+    @supports not ((backdrop-filter: blur(6px)) or (-webkit-backdrop-filter: blur(6px))) {
+        .game-container .puzzle-piece { background: rgba(255, 255, 255, 0.28); }
+    }
+
+    /* Detaje brenda copëzës */
+    .game-container .puzzle-piece::before {
+        content: '';
+        position: absolute;
+        width: clamp(10px, 1.5vw, 25px);
+        height: clamp(10px, 1.5vw, 25px);
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.2) 70%);
+        top: clamp(6px, 1vw, 15px);
+        left: clamp(6px, 1vw, 15px);
+        box-shadow: 0 0 25px rgba(255, 255, 255, 0.7);
+        animation: pulse 3s infinite ease-in-out;
+    }
+    .game-container .puzzle-piece::after {
+        content: '';
+        position: absolute;
+        top: -50%; left: -50%;
+        width: 200%; height: 200%;
+        background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transform: rotate(45deg);
+        animation: shine 7s infinite ease-in-out;
+    }
+
+    /* Ngjyrime/pozicionime të ndryshme për 10 copëzat */
+    .game-container .puzzle-piece:nth-child(1) { top: 12%; left: 8%;  animation-delay: 0s;  background: linear-gradient(135deg, rgba(255, 20, 147, 0.6), rgba(255, 105, 180, 0.6)); }
+    .game-container .puzzle-piece:nth-child(2) { top: 22%; right: 12%; animation-delay: 3s;  background: linear-gradient(135deg, rgba(255, 140, 0, 0.6), rgba(255, 215, 0, 0.6)); }
+    .game-container .puzzle-piece:nth-child(3) { bottom: 18%; left: 12%; animation-delay: 6s;  background: linear-gradient(135deg, rgba(0, 191, 255, 0.6), rgba(30, 144, 255, 0.6)); }
+    .game-container .puzzle-piece:nth-child(4) { bottom: 28%; right: 8%; animation-delay: 9s;  background: linear-gradient(135deg, rgba(138, 43, 226, 0.6), rgba(148, 0, 211, 0.6)); }
+    .game-container .puzzle-piece:nth-child(5) { top: 42%; left: 18%; animation-delay: 12s; background: linear-gradient(135deg, rgba(50, 205, 50, 0.6), rgba(0, 255, 127, 0.6)); }
+    .game-container .puzzle-piece:nth-child(6) { top: 58%; right: 22%; animation-delay: 15s; background: linear-gradient(135deg, rgba(255, 69, 0, 0.6), rgba(255, 165, 0, 0.6)); }
+    .game-container .puzzle-piece:nth-child(7) { top: 30%; left: 45%; animation-delay: 18s; background: linear-gradient(135deg, rgba(255, 0, 0, 0.6), rgba(255, 99, 71, 0.6)); width: clamp(35px, 4.7vw, 70px); height: clamp(35px, 4.7vw, 70px); }
+    .game-container .puzzle-piece:nth-child(8) { bottom: 45%; right: 35%; animation-delay: 21s; background: linear-gradient(135deg, rgba(255, 20, 147, 0.5), rgba(138, 43, 226, 0.5)); width: clamp(35px, 4vw, 60px); height: clamp(35px, 4vw, 60px); }
+    .game-container .puzzle-piece:nth-child(9) { top: 65%; left: 35%; animation-delay: 24s; background: linear-gradient(135deg, rgba(0, 255, 255, 0.6), rgba(0, 191, 255, 0.6)); width: clamp(35px, 5.6vw, 85px); height: clamp(35px, 5.6vw, 85px); }
+    .game-container .puzzle-piece:nth-child(10){ top: 15%; left: 65%; animation-delay: 27s; background: linear-gradient(135deg, rgba(255, 215, 0, 0.6), rgba(255, 140, 0, 0.6)); width: clamp(35px, 5vw, 75px); height: clamp(35px, 5vw, 75px); }
+
+    /* Stars */
+    .game-container .stars { position: absolute; inset: 0; pointer-events: none; z-index: -6; }
+    .game-container .star {
+        position: absolute;
+        width: 2px; height: 2px;         /* default desktop */
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 50%;
+        animation: twinkle 5s infinite ease-in-out;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+    }
+
+    /* =========================
+       ANIMATIONS
+       ========================= */
+    @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(45deg) scale(1); }
+        25%      { transform: translateY(-20px) rotate(50deg) scale(1.08); }
+        50%      { transform: translateY(15px) rotate(40deg) scale(0.95); }
+        75%      { transform: translateY(-10px) rotate(55deg) scale(1.04); }
+    }
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.8; }
+        50%      { transform: scale(1.3); opacity: 1; }
+    }
+    @keyframes shine {
+        0%   { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%)  rotate(45deg); }
+    }
+    @keyframes twinkle {
+        0%, 100% { opacity: 0.5; transform: scale(1); }
+        50%      { opacity: 1;   transform: scale(1.4); }
+    }
+    @keyframes glow-move {
+        0%, 100% { transform: translate(0, 0)     scale(1); }
+        25%      { transform: translate(50px,-40px) scale(1.2); }
+        50%      { transform: translate(-40px,50px) scale(0.9); }
+        75%      { transform: translate(40px,40px)  scale(1.1); }
+    }
+
+    /* =========================
+       ACCESSIBILITY (Motion)
+       ========================= */
+    @media (prefers-reduced-motion: reduce) {
+        .game-container * { animation: none !important; transition: none !important; }
+    }
+
+    /* =========================
+       DARK MODE OVERRIDES (ngjyra më të ftohta)
+       ========================= */
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(1)  { background: linear-gradient(135deg, rgba(135, 206, 235, 0.6), rgba(176, 196, 222, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(2)  { background: linear-gradient(135deg, rgba(100, 149, 237, 0.6), rgba(123, 104, 238, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(3)  { background: linear-gradient(135deg, rgba(72, 61, 139, 0.6), rgba(106, 90, 205, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(4)  { background: linear-gradient(135deg, rgba(25, 25, 112, 0.6), rgba(65, 105, 225, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(5)  { background: linear-gradient(135deg, rgba(70, 130, 180, 0.6), rgba(95, 158, 160, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(6)  { background: linear-gradient(135deg, rgba(30, 144, 255, 0.6), rgba(0, 191, 255, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(7)  { background: linear-gradient(135deg, rgba(64, 224, 208, 0.5), rgba(72, 209, 204, 0.5)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(8)  { background: linear-gradient(135deg, rgba(102, 205, 170, 0.5), rgba(127, 255, 212, 0.5)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(9)  { background: linear-gradient(135deg, rgba(0, 206, 209, 0.6), rgba(64, 224, 208, 0.6)); }
+    body[data-theme="dark"] .game-container .puzzle-piece:nth-child(10) { background: linear-gradient(135deg, rgba(135, 206, 250, 0.6), rgba(173, 216, 230, 0.6)); }
+
+    body[data-theme="dark"] .game-container .glow:nth-child(1) { background: radial-gradient(circle, rgba(135, 206, 235, 0.4) 0%, transparent 70%); }
+    body[data-theme="dark"] .game-container .glow:nth-child(2) { background: radial-gradient(circle, rgba(100, 149, 237, 0.3) 0%, transparent 70%); }
+    body[data-theme="dark"] .game-container .glow:nth-child(3) { background: radial-gradient(circle, rgba(72, 61, 139, 0.3) 0%, transparent 70%); }
+
+    /* OPSIONALE: auto-dark vetëm kur NUK ke data-theme në body (s’ndikon te light manual) */
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme]) .game-container {
+        background:
+          radial-gradient(circle at 15% 20%, rgba(135, 206, 235, 0.3) 0%, transparent 45%),
+          radial-gradient(circle at 80% 70%, rgba(100, 149, 237, 0.4) 0%, transparent 45%),
+          radial-gradient(circle at 40% 85%, rgba(72, 61, 139, 0.4) 0%, transparent 45%),
+          radial-gradient(circle at 65% 25%, rgba(25, 25, 112, 0.5) 0%, transparent 45%),
+          linear-gradient(135deg, #1a1a2e, #16213e, #0f3460, #16213e);
+      }
+    }
+
+/* ------------------------------------------------------------------
+     DESKTOP TIGHTENING: make background pieces smaller, centered and spaced
+     ------------------------------------------------------------------ */
+@media (min-width: 769px) {
+    /* Slightly smaller, consistent pieces on desktop for better composition */
+    .game-container .puzzle-piece {
+        width: clamp(42px, 3.0vw, 60px) !important;
+        height: clamp(42px, 3.0vw, 60px) !important;
+        border-radius: clamp(8px, 0.8vw, 14px) !important;
+        /* keep animations but reduce motion amplitude so pieces stay near anchors */
+        will-change: transform, opacity;
+    }
+
+    /* Anchor the pieces to a balanced grid around the central game-area so
+       they are less likely to overlap the board or header. Positions use
+       percentages so they adapt with viewport size. */
+    .game-container .puzzle-piece:nth-child(1)  { top: 14%; left: 18%; }
+    .game-container .puzzle-piece:nth-child(2)  { top: 14%; left: 50%; }
+    .game-container .puzzle-piece:nth-child(3)  { top: 14%; left: 82%; }
+    .game-container .puzzle-piece:nth-child(4)  { top: 34%; left: 18%; }
+    .game-container .puzzle-piece:nth-child(5)  { top: 34%; left: 50%; }
+    .game-container .puzzle-piece:nth-child(6)  { top: 34%; left: 82%; }
+    .game-container .puzzle-piece:nth-child(7)  { top: 54%; left: 18%; }
+    .game-container .puzzle-piece:nth-child(8)  { top: 54%; left: 50%; }
+    .game-container .puzzle-piece:nth-child(9)  { top: 54%; left: 82%; }
+    .game-container .puzzle-piece:nth-child(10) { top: 74%; left: 50%; }
+
+    /* Lower z-index so pieces stay visually behind UI, but keep them clickable-ignored */
+    .game-container .puzzle-piece { z-index: -1; pointer-events: none; }
+
+    /* Slightly loosen the float animation amplitude on large screens so pieces
+       remain visually steady near anchors (reduces overlap during motion). */
+    @supports (animation: float 18s) {
+        .game-container .puzzle-piece { animation-duration: 22s; }
+    }
+
+    /* Extra-large screens: increase horizontal spread for breathing room */
+    @media (min-width: 1400px) {
+        .game-container .puzzle-piece:nth-child(1) { left: 12%; }
+        .game-container .puzzle-piece:nth-child(3) { left: 88%; }
+        .game-container .puzzle-piece:nth-child(7) { left: 12%; }
+        .game-container .puzzle-piece:nth-child(9) { left: 88%; }
+    }
+}
+
+
+/* ------------------------------
+     MOBILE OVERRIDES: show all 10
+     ------------------------------
+     Undo previous `display:none` rules for pieces 9/10 and 7/8 on small screens.
+     Use higher specificity and !important to ensure overrides apply.
+*/
+

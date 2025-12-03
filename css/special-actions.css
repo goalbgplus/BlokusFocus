@@ -1,0 +1,338 @@
+body:not([data-theme="dark"]) .special-actions {
+        background: linear-gradient(135deg, rgba(33, 150, 243, 0.32) 0%, rgba(162, 89, 247, 0.28) 50%, rgba(0, 230, 180, 0.22) 100%) !important;
+        backdrop-filter: blur(22px) saturate(200%) !important;
+        -webkit-backdrop-filter: blur(22px) saturate(200%) !important;
+        box-shadow: 0 8px 32px rgba(33, 150, 243, 0.10), 0 1.5px 0 rgba(255,255,255,0.10) inset !important;
+        border-radius: 20px !important;
+        border: 2px solid rgba(255,255,255,0.22) !important;
+}
+@media (min-width: 601px) {
+    body:not([data-theme="dark"]) .special-actions {
+        max-width: 520px !important;
+        margin: 0 auto 24px auto !important;
+        left: 0; right: 0;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+}
+/* Container for special action buttons */
+.special-actions {
+    position: fixed;
+    bottom: 0 !important; /* Force bottom position */
+    left: 0;
+    right: 0; /* Ensure full width coverage */
+    width: 100%;
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px;
+    background: linear-gradient(180deg, 
+        transparent 0%,
+        rgba(0, 0, 0, 0.15) 50%,
+        rgba(0, 0, 0, 0.25) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    gap: 4rem; /* adjusted spacing between special-action buttons as requested:4 */
+    min-height: 3rem;
+    border-radius: 0;
+    overflow: visible !important;
+    pointer-events: auto;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    margin: 0 !important; /* Remove any margins */
+    transform: none !important; /* Prevent any transforms */
+}
+
+.action-btn {
+    position: relative;
+    width: 32px; /* reduced further */
+    height: 32px; /* reduced further */
+    background: linear-gradient(135deg, 
+        rgba(139, 92, 246, 0.25) 0%,
+        rgba(139, 92, 246, 0.15) 100%);
+    border: 2px solid rgba(139, 92, 246, 0.4);
+    border-radius: 12px; /* Slightly reduced from 14px */
+    outline: none;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column;
+    gap: 2px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.32, 0.08, 0.24, 1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 
+        0 4px 12px rgba(139, 92, 246, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        0 0 0 0 rgba(139, 92, 246, 0.5);
+    overflow: visible !important; /* Keep visible for badges */
+    pointer-events: auto;
+}
+
+/* Disable original shine effect on action buttons */
+.action-btn::before {
+    display: none !important;
+}
+
+/* Wrapper for clipping only the shine effect */
+.shine-clip {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* New shine effect inside the clip wrapper */
+.shine-clip::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -80%;
+    width: 80%;
+    height: 100%;
+    background: linear-gradient(90deg,
+        transparent 0%,
+        rgba(255,255,255,0.15) 40%,
+        rgba(255,255,255,0.25) 50%,
+        rgba(255,255,255,0.15) 60%,
+        transparent 100%);
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: left 0.6s ease, opacity 0.3s ease;
+}
+
+/* Trigger shine animation on hover or click */
+.action-btn:hover .shine-clip::before,
+.action-btn:active .shine-clip::before {
+    opacity: 1;
+    left: 120%;
+}
+
+.action-btn i {
+    font-size: 1rem; /* Smaller icon size */
+    color: rgba(255, 255, 255, 0.95);
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 2;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    display: block;
+    margin: 0 auto;
+    line-height: 1;
+}
+
+/* Hover effects */
+.action-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(139, 92, 246, 0.4) 0%,
+        rgba(139, 92, 246, 0.25) 100%);
+    border-color: rgba(139, 92, 246, 0.6);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 8px 20px rgba(139, 92, 246, 0.35),
+        inset 0 1px 1px rgba(255, 255, 255, 0.25),
+        0 0 25px rgba(139, 92, 246, 0.3);
+}
+
+.action-btn:hover i {
+    transform: scale(1.12); /* Slightly reduced from 1.15 */
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.6));
+}
+
+/* Always allow interactions and visibility for special-actions */
+.special-actions {
+    pointer-events: auto !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: flex !important;
+}
+/* If hidden class applied, force show on mobile */
+.special-actions.hidden {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Active state press effect */
+.action-btn:active {
+    transform: translateY(-1px) scale(0.98);
+    box-shadow: 
+        0 4px 10px rgba(139, 92, 246, 0.25),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Badge styling */
+.badge {
+    position: absolute;
+    z-index: 1002;
+    top: -4px;
+    right: -4px;
+    background: linear-gradient(135deg, #2196f3 0%, #a259f7 100%);
+    color: #fff;
+    font-size: 0.55rem;
+    width: 1rem;
+    height: 1rem;
+    /* line-height removed to allow flex centering */
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid rgba(33, 150, 243, 0.7);
+    text-align: center;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 
+        0 2px 8px rgba(33, 150, 243, 0.25),
+        0 0 6px #a259f7aa,
+        inset 0 1px 1px rgba(255, 255, 255, 0.18);
+    animation: badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes badge-pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 2px 8px rgba(238, 90, 111, 0.5);
+    }
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(238, 90, 111, 0.7);
+    }
+}
+
+/* Disabled state */
+.action-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: linear-gradient(135deg, 
+        rgba(100, 100, 100, 0.15) 0%,
+        rgba(80, 80, 80, 0.1) 100%);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.action-btn:disabled:hover {
+    transform: none;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.action-btn:disabled i {
+    filter: grayscale(1);
+}
+
+
+/* Hide special-actions when hidden class is applied */
+.special-actions.hidden {
+    display: none !important;
+}
+
+/* Prevent parent .game-container from clipping badges */
+.game-container {
+    overflow: visible !important;
+}
+
+/* Desktop: larger buttons with better spacing */
+@media (min-width: 769px) {
+    .special-actions {
+        gap: 2rem; /* Increased from 1.2rem for better spacing */
+        padding: 16px;
+    }
+    .action-btn {
+        width: 40px; /* reduced further for desktop */
+        height: 40px; /* reduced further for desktop */
+        border-radius: 14px; /* Slightly reduced from 16px */
+    }
+    .action-btn i {
+        font-size: 1.2rem; /* Smaller on desktop */
+    }
+    .badge {
+        width: 1rem;
+        height: 1rem;
+        /* line-height removed to allow flex centering */
+        font-size: 0.6rem;
+        top: -5px;
+        right: -5px;
+    }
+}
+
+/* Desktop and tablet spacing override */
+@media (min-width: 769px) {
+    .special-actions {
+        gap: 6rem !important; /* increase spacing between buttons on larger screens */
+    }
+}
+
+/* Light theme variations */
+body:not([data-theme="dark"]) .special-actions {
+    background: linear-gradient(120deg, rgba(162, 89, 247, 0.38) 0%, rgba(109, 40, 217, 0.32) 100%);
+    backdrop-filter: blur(18px) saturate(180%);
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    box-shadow: 0 8px 32px rgba(162, 89, 247, 0.10), 0 1.5px 0 rgba(255,255,255,0.12) inset;
+    border-radius: 18px;
+    bottom: 0 !important; /* Ensure same bottom position for light theme */
+    position: fixed !important;
+}
+
+/* Dark theme - ensure consistent positioning */
+body[data-theme="dark"] .special-actions {
+    bottom: 0 !important;
+    position: fixed !important;
+}
+
+body:not([data-theme="dark"]) .special-actions .action-btn {
+    background: linear-gradient(135deg, #007aff 0%, #0051a8 100%);
+    border-color: #0051a8;
+    box-shadow: 0 4px 16px rgba(0,122,255,0.18), 0 1px 0 rgba(255,255,255,0.22) inset;
+    color: #fff !important;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.10);
+}
+
+body:not([data-theme="dark"]) .action-btn:hover {
+    background: linear-gradient(135deg, 
+        rgba(139, 92, 246, 0.5) 0%,
+        rgba(139, 92, 246, 0.3) 100%);
+    border-color: rgba(139, 92, 246, 0.7);
+}
+
+
+/* Highlight for selected/active special-action buttons */
+.action-btn.active,
+.action-btn.active-mode {
+    background: linear-gradient(135deg,
+        rgba(139, 92, 246, 0.6) 0%,
+        rgba(139, 92, 246, 0.4) 100%);
+    border-color: rgba(139, 92, 246, 0.8);
+    box-shadow:
+        0 8px 16px rgba(139, 92, 246, 0.3),
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        0 0 10px rgba(139, 92, 246, 0.5) !important;
+}
+.action-btn.active i,
+.action-btn.active-mode i {
+    color: #fff !important;
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+}
+
+/* Light theme override - different color for better visibility */
+body:not([data-theme="dark"]) .action-btn.active,
+body:not([data-theme="dark"]) .action-btn.active-mode {
+    background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+    border-color: #ff5722;
+    box-shadow:
+        0 8px 24px rgba(255, 152, 0, 0.18),
+        0 0 0 2px #fff inset,
+        0 0 10px #ff980080 !important;
+}

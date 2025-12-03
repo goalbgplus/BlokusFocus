@@ -1,0 +1,148 @@
+/* Dedicated: Row-clear animation styles - ANIMACIONI I RRESHTAVE U FSHI PLOTËSISHT
+   Mbetet vetëm cell-clear-overlay për të mbështetur clearing animation të minimalistik
+*/
+
+/* Row Clear Canvas Overlay positioning */
+.game-area {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#rowClearCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50; /* above grid, below UI overlays */
+    background: transparent;
+    display: block;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+#rowClearOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 55;
+    border-radius: inherit;
+}
+
+.cell-clear-overlay {
+    position: absolute;
+    pointer-events: none;
+    will-change: transform, opacity, filter;
+    border-radius: 25%; /* Njësoj si blloqet */
+    opacity: 1; /* Siguro që është plotësisht vizibël */
+    z-index: 10; /* Mbi blloqet e rrjetës */
+    
+    /* Përdor të njëjtat gradiente si .grid-cell[class*="filled-"] */
+    background: linear-gradient(135deg, var(--color-dark-1, #14b8a6), var(--color-dark-2, #0f766e));
+    
+    /* Kopjo efektet e box-shadow nga blloqet */
+    box-shadow: 
+        0px 4px 10px rgba(0,0,0,0.2),
+        inset 1px 1px 2px var(--color-bevel-light, rgba(255,255,255,0.2)),
+        inset -1px -1px 2px var(--color-bevel-dark, rgba(0,0,0,0.4));
+    
+    overflow: hidden;
+}
+
+/* Shto shkëlqimin e brendshëm si blloqet */
+.cell-clear-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: radial-gradient(circle at 42% 38%,
+        var(--color-core-light, rgba(173, 255, 219, 0.8)) 0%,
+        var(--color-core-mid, rgba(81, 238, 176, 0.5)) 25%,
+        transparent 65%);
+    mix-blend-mode: lighten;
+    opacity: 0.95;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Shto shkëlqimin e sipërm si blloqet */
+.cell-clear-overlay::after {
+    content: '';
+    position: absolute;
+    top: 8%; left: 11%;
+    width: 72%; height: 16%;
+    background: rgba(255, 255, 255, 0.57);
+    clip-path: polygon(0% 25%, 100% 0%, 90% 100%, 10% 100%);
+    filter: blur(4px);
+    box-shadow: inset 0 0 6px rgba(255,255,255,0.6);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Per-cell cleared animation (modern, desktop): pop + lift + subtle glow - VETËM për qelizat me ngjyrë! */
+.grid-cell[class*="filled-"].cleared {
+    position: relative;
+    z-index: 2;
+    animation: cell-cleared-modern 0.7s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+    box-shadow: 0 0 20px 6px var(--animation-color, rgba(255,215,0,0.95)), 0 0 40px 12px rgba(255,255,255,0.06);
+    will-change: transform, box-shadow, filter, opacity;
+}
+.grid-cell[class*="filled-"].cleared::after {
+    content: '';
+    position: absolute;
+    left: -10%; top: -10%;
+    width: 120%; height: 120%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.06) 45%, rgba(255,255,255,0) 70%);
+    transform: translateX(-110%) skewX(-8deg);
+    opacity: 0;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    animation: cleared-shine 0.7s ease-out both;
+}
+
+@keyframes cell-cleared-modern {
+    0% {
+        transform: scale(1) translateY(0) rotate(0deg);
+        opacity: 1;
+        filter: brightness(1);
+        box-shadow: 0 0 8px 2px rgba(0,0,0,0.0);
+    }
+    25% {
+        transform: scale(1.14) translateY(-8px) rotate(-1deg);
+        filter: brightness(1.35) saturate(1.15);
+        opacity: 1;
+    }
+    55% {
+        transform: scale(1.04) translateY(-14px) rotate(1deg);
+        filter: brightness(1.12);
+    }
+    100% {
+        transform: scale(1) translateY(0) rotate(0deg);
+        opacity: 1;
+        filter: none;
+    }
+}
+
+@keyframes cleared-shine {
+    0% { opacity: 0; transform: translateX(-110%) skewX(-8deg); }
+    30% { opacity: 0.95; transform: translateX(10%) skewX(-4deg); }
+    100% { opacity: 0; transform: translateX(120%) skewX(0deg); }
+}
+
+/* Simple pulse used for short clear pulses (kept minimal) - VETËM për qelizat me ngjyrë! */
+@keyframes pulse {
+    from { opacity: 0.5; }
+    to   { opacity: 1; }
+}
+.grid-cell[class*="filled-"].pulse {
+    animation: pulse 0.6s ease-out forwards;
+}
+
+/* Overlay animations u hiqën - nuk ka më animacion fshirje */

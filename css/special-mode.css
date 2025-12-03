@@ -1,0 +1,65 @@
+/* Glass-morphism style for special mode messages (help/hint popups) */
+.special-mode-message {
+    background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, rgba(210,225,255,0.18) 100%);
+    border-radius: 22px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.18), 0 0 0 2px rgba(120,180,255,0.12), 0 1.5px 12px rgba(120,180,255,0.10);
+    border: 1.5px solid rgba(120,180,255,0.22);
+    backdrop-filter: blur(14px) saturate(1.2);
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    color: #1a2340;
+    padding: 1.25rem 2.5rem 1.15rem 2.5rem;
+    font-size: 1.22rem;
+    font-weight: 700;
+    text-align: center;
+    z-index: 3000;
+    position: fixed;
+    left: 50%;
+    top: 7.5%;
+    transform: translateX(-50%) scale(1);
+    max-width: 92vw;
+    min-width: 240px;
+    transition: background 0.3s, opacity 0.3s, transform 0.25s cubic-bezier(.42,1.2,.58,1);
+    opacity: 1;
+    letter-spacing: 0.01em;
+    overflow: hidden;
+    border-bottom: 2.5px solid rgba(120,180,255,0.22);
+    animation: glassMessagePop 0.45s cubic-bezier(.42,1.2,.58,1);
+}
+
+@keyframes glassMessagePop {
+    0% { opacity: 0; transform: translateX(-50%) scale(0.85); }
+    60% { opacity: 1; transform: translateX(-50%) scale(1.08); }
+    100% { opacity: 1; transform: translateX(-50%) scale(1); }
+}
+
+.special-mode-message::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; right: 0; bottom: 0;
+    border-radius: 22px;
+    pointer-events: none;
+    background: radial-gradient(circle at 60% 10%, rgba(255,255,255,0.18) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.special-mode-message .icon {
+    display: inline-block;
+    font-size: 1.5em;
+    margin-right: 0.5em;
+    vertical-align: middle;
+    filter: drop-shadow(0 2px 6px rgba(120,180,255,0.18));
+}
+
+.special-mode-message.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+body[data-theme="dark"] .special-mode-message {
+    background: linear-gradient(135deg, rgba(12,26,48,0.92) 0%, rgba(32,44,72,0.88) 100%);
+    border: 1.5px solid rgba(120,180,255,0.12);
+    color: #eaf2ff;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.28), 0 0 0 2px rgba(120,180,255,0.18), 0 1.5px 12px rgba(120,180,255,0.10);
+    border-bottom: 2.5px solid rgba(120,180,255,0.18);
+}
