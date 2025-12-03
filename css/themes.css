@@ -2,17 +2,11 @@
 
 :root {
     /* === SIZING VARIABLES === */
-    /* Game Grid - Mobile defaults (28px) */
+    /* Game Grid */
     --grid-cell-size: 28px;
-    --piece-block-size: var(--grid-cell-size);
-    --grid-gap: 2px; /* Reduced spacing between cells and pieces */
+    --piece-block-size: 28px;
+    --grid-gap: 2px;
     --grid-step: calc(var(--grid-cell-size) + var(--grid-gap));
-    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--grid-gap));
-    --game-grid-padding: 30px;
-    --game-grid-border: 2px;
-    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
-    --grid-cell-radius: calc(var(--grid-cell-size) * 0.25);
-    --view-height: 100vh;
     
     /* Landing Page Icons & Components */
     --icon-size: 60px;
@@ -67,7 +61,6 @@
 @media (min-width: 769px) {
     :root {
         --grid-cell-size: 48px;
-        --piece-block-size: var(--grid-cell-size);
         --header-button-size: 42px; /* desktop: larger action buttons like header */
     }
 }
@@ -135,4 +128,18 @@ body[data-theme="dark"] .grid-cell-block.ghost {
     box-shadow: 
         0 0 0 2px rgba(120,180,255,0.95),
         0 0 12px rgba(120,180,255,0.5) !important;
+}
+
+/* Mobile Grid Overrides (apply in same file to keep cascade consistent) */
+@media (max-width: 768px) {
+    :root {
+        --grid-cell-size: clamp(29px, 5.5vh, 36px);
+        --piece-block-size: calc(var(--grid-cell-size) * 0.7);
+        --grid-gap: 2px;
+        --game-grid-gap: 2px;
+        --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap));
+        --game-grid-padding: 16px;
+        --game-grid-border: 2px;
+        --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
+    }
 }
