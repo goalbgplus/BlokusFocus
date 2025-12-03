@@ -2,11 +2,17 @@
 
 :root {
     /* === SIZING VARIABLES === */
-    /* Game Grid */
+    /* Game Grid - Mobile defaults (28px) */
     --grid-cell-size: 28px;
-    --piece-block-size: 28px;
-    --grid-gap: 2px;
+    --piece-block-size: var(--grid-cell-size);
+    --grid-gap: 2px; /* Reduced spacing between cells and pieces */
     --grid-step: calc(var(--grid-cell-size) + var(--grid-gap));
+    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--grid-gap));
+    --game-grid-padding: 30px;
+    --game-grid-border: 2px;
+    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
+    --grid-cell-radius: calc(var(--grid-cell-size) * 0.25);
+    --view-height: 100vh;
     
     /* Landing Page Icons & Components */
     --icon-size: 60px;
@@ -61,6 +67,7 @@
 @media (min-width: 769px) {
     :root {
         --grid-cell-size: 48px;
+        --piece-block-size: var(--grid-cell-size);
         --header-button-size: 42px; /* desktop: larger action buttons like header */
     }
 }

@@ -9,23 +9,10 @@
 /* Game UI styles: arena, grid, pieces, and dragged clone
     =========================================================
     Stili i përditësuar me dizajnin e ri "Kristal Solid" dhe rregullimet e paraqitjes.
+    
+    NOTE: CSS variables moved to themes.css @media rules to avoid cascade conflicts
+    with mobile.css media queries. This file now only uses the variables defined there.
 */
-
-:root {
-    /* Ensure consistent block sizes between inventory and game arena */
-    --grid-cell-size: 40px;
-    --piece-block-size: var(--grid-cell-size); /* Match block size to grid cell size */
-
-    /* Variablat ekzistuese të lojës suaj */
-    --grid-gap: 2px; /* Reduced spacing between cells and pieces */
-    --grid-step: calc(var(--grid-cell-size) + var(--grid-gap));
-    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--grid-gap));
-    --game-grid-padding: 30px; /* padding: 15px on each side */
-    --game-grid-border: 2px; /* border: 1px on each side */
-    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
-    --view-height: 100vh;
-    --grid-cell-radius: calc(var(--grid-cell-size) * 0.25);
-}
 
 @supports (height: 100dvh) {
     :root {

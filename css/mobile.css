@@ -3,37 +3,34 @@
    Keep heavy visual effects minimal here for performance on phones.
 */
 
-:root {
-    /* Mobile dimensions - responsive sizing based on viewport height */
-    --grid-cell-size: clamp(29px, 5.5vh, 36px); /* Scales between 29-36px based on viewport */
-    --piece-block-size: calc(var(--grid-cell-size) * 0.7);
-    
-    /* Calculate grid total size for mobile */
-    --game-grid-gap: 2px;
-    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap));
-    --game-grid-padding: 16px;
-    --game-grid-border: 2px;
-    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
-}
-
-/* Small phones (iPhone SE, iPhone 6/7/8 - height ~667px) */
-@media (max-height: 700px) {
+/* Mobile-specific grid sizing - override defaults from themes.css */
+@media (max-width: 768px) {
     :root {
-        --grid-cell-size: 28px;
+        /* Mobile dimensions - responsive sizing based on viewport height */
+        --grid-cell-size: clamp(29px, 5.5vh, 36px); /* Scales between 29-36px based on viewport */
+        --piece-block-size: var(--grid-cell-size); /* Use full grid-cell-size, not 0.7x */
+        --game-grid-padding: 16px; /* Smaller padding on mobile */
     }
-}
 
-/* Extra small phones (iPhone 5S - height ~568px) */
-@media (max-height: 600px) {
-    :root {
-        --grid-cell-size: 24px;
+    /* Small phones (iPhone SE, iPhone 6/7/8 - height ~667px) */
+    @media (max-height: 700px) {
+        :root {
+            --grid-cell-size: 28px;
+        }
     }
-}
 
-/* Large phones (Galaxy S20 Ultra, iPhone 12 Pro Max - height ~915px+) */
-@media (min-height: 900px) {
-    :root {
-        --grid-cell-size: 36px;
+    /* Extra small phones (iPhone 5S - height ~568px) */
+    @media (max-height: 600px) {
+        :root {
+            --grid-cell-size: 24px;
+        }
+    }
+
+    /* Large phones (Galaxy S20 Ultra, iPhone 12 Pro Max - height ~915px+) */
+    @media (min-height: 900px) {
+        :root {
+            --grid-cell-size: 36px;
+        }
     }
 }
 
