@@ -169,7 +169,32 @@ export function initLanding() {
                 // Lazy-load game code modules
                 import('./main.js').then(({ initMain }) => {
                     initMain();
-                }).catch(console.error);
+                }).catch(err => {
+                    console.error('Lazy import failed:', err);
+                    // Show a visible banner with the error so it's obvious on phones
+                    try {
+                        const existing = document.getElementById('clientImportErrorBanner');
+                        if (existing) existing.remove();
+                        const banner = document.createElement('div');
+                        banner.id = 'clientImportErrorBanner';
+                        banner.style.position = 'fixed';
+                        banner.style.left = '12px';
+                        banner.style.right = '12px';
+                        banner.style.bottom = '24px';
+                        banner.style.zIndex = '99999';
+                        banner.style.background = 'linear-gradient(90deg,#ff6b6b,#ff4757)';
+                        banner.style.color = '#fff';
+                        banner.style.padding = '12px 16px';
+                        banner.style.borderRadius = '8px';
+                        banner.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
+                        banner.style.fontSize = '14px';
+                        banner.style.lineHeight = '1.2';
+                        banner.textContent = 'Error loading game: ' + (err && err.message ? err.message : String(err));
+                        document.body.appendChild(banner);
+                    } catch (e) {
+                        // swallow errors while reporting
+                    }
+                });
                 // Vetëm spinner në buton, pa modal
                 const iconContainer = this.querySelector('.icon');
                 if (iconContainer) {
