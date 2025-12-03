@@ -3,34 +3,37 @@
    Keep heavy visual effects minimal here for performance on phones.
 */
 
-/* Mobile-specific grid sizing - override defaults from themes.css */
-@media (max-width: 768px) {
+:root {
+    /* Mobile dimensions - responsive sizing based on viewport height */
+    --grid-cell-size: clamp(29px, 5.5vh, 36px); /* Scales between 29-36px based on viewport */
+    --piece-block-size: calc(var(--grid-cell-size) * 0.7);
+    
+    /* Calculate grid total size for mobile */
+    --game-grid-gap: 2px;
+    --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap));
+    --game-grid-padding: 16px;
+    --game-grid-border: 2px;
+    --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border));
+}
+
+/* Small phones (iPhone SE, iPhone 6/7/8 - height ~667px) */
+@media (max-height: 700px) {
     :root {
-        /* Mobile dimensions - responsive sizing based on viewport height */
-        --grid-cell-size: clamp(24px, 4.8vh, 30px); /* SMALLER: 24-30px, was 29-36px */
-        --piece-block-size: calc(var(--grid-cell-size) * 0.65); /* Pieces 65% of cell size, was full */
-        --game-grid-padding: 12px; /* Even smaller padding on mobile */
+        --grid-cell-size: 28px;
     }
+}
 
-    /* Small phones (iPhone SE, iPhone 6/7/8 - height ~667px) */
-    @media (max-height: 700px) {
-        :root {
-            --grid-cell-size: 22px; /* Down from 28px */
-        }
+/* Extra small phones (iPhone 5S - height ~568px) */
+@media (max-height: 600px) {
+    :root {
+        --grid-cell-size: 24px;
     }
+}
 
-    /* Extra small phones (iPhone 5S - height ~568px) */
-    @media (max-height: 600px) {
-        :root {
-            --grid-cell-size: 20px; /* Down from 24px */
-        }
-    }
-
-    /* Large phones (Galaxy S20 Ultra, iPhone 12 Pro Max - height ~915px+) */
-    @media (min-height: 900px) {
-        :root {
-            --grid-cell-size: 30px; /* Down from 36px */
-        }
+/* Large phones (Galaxy S20 Ultra, iPhone 12 Pro Max - height ~915px+) */
+@media (min-height: 900px) {
+    :root {
+        --grid-cell-size: 36px;
     }
 }
 
@@ -135,20 +138,20 @@
     flex-direction: row !important;
     align-items: center !important;
     justify-content: space-between !important;
-    gap: clamp(8px, 3vw, 14px) !important;
+    gap: clamp(10px, 4vw, 18px) !important;
     width: 100% !important;
     max-width: min(var(--game-grid-total-size), 100vw) !important;
     height: auto !important;
-    min-height: calc(var(--piece-block-size) * 2.8 + 20px) !important;
-    max-height: clamp(70px, 14vh, 140px) !important;
-    margin: clamp(12px, 2.5vh, 22px) 0 0 0 !important;
-    padding: clamp(8px, 2.2vw, 12px) clamp(6px, 1.5vw, 10px) !important;
-    background: rgba(255, 255, 255, 0.08) !important; /* TRANSPARENT LAYER */
-    border-radius: 10px !important; /* Soft corners */
-    -webkit-backdrop-filter: blur(4px) !important; /* GLASS EFFECT */
-    backdrop-filter: blur(4px) !important; /* GLASS EFFECT */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; /* Subtle shadow */
-    border: 1px solid rgba(255, 255, 255, 0.1) !important; /* Subtle border */
+    min-height: calc(var(--piece-block-size) * 3 + 24px) !important;
+    max-height: clamp(84px, 16vh, 160px) !important;
+    margin: clamp(16px, 3vh, 28px) 0 0 0 !important;
+    padding: clamp(10px, 2.6vw, 16px) clamp(8px, 2vw, 14px) !important;
+    /* Keep transparent on mobile, don't force background */
+    background: transparent;
+    border-radius: 0;
+    backdrop-filter: none;
+    box-shadow: none;
+    border: none;
     box-sizing: border-box !important;
     overflow-y: hidden !important;
     overflow-x: auto !important;
