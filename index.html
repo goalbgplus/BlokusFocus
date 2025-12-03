@@ -80,22 +80,13 @@
             *{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important}
         }
     </style>
-        <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
-        <!-- Cache busting: add ?v=X.X to force reload on changes -->
-        <link rel="preload" href="css/themes.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/style.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/landing-page-clean.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/game-ui.css?v=3.0" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/desktop.css?v=3.0" as="style" media="(min-width:769px)" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/mobile.css?v=3.0" as="style" media="(max-width:768px)" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript>
-            <link rel="stylesheet" href="css/themes.css?v=3.0">
-            <link rel="stylesheet" href="css/style.css?v=3.0">
-            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.0">
-            <link rel="stylesheet" href="css/game-ui.css?v=3.0">
-            <link rel="stylesheet" href="css/desktop.css?v=3.0" media="(min-width:769px)">
-            <link rel="stylesheet" href="css/mobile.css?v=3.0" media="(max-width:768px)">
-        </noscript>
+        <!-- Core CSS: deterministic load order for consistent cascade -->
+        <link rel="stylesheet" href="css/themes.css?v=3.0">
+        <link rel="stylesheet" href="css/style.css?v=3.0">
+        <link rel="stylesheet" href="css/landing-page-clean.css?v=3.0">
+        <link rel="stylesheet" href="css/game-ui.css?v=3.0">
+        <link rel="stylesheet" href="css/desktop.css?v=3.0" media="(min-width:769px)">
+        <link rel="stylesheet" href="css/mobile.css?v=3.0" media="(max-width:768px)">
     <!-- Animation CSS - load via idle callback -->
     <script>
     // Defer non-critical CSS until browser idle
