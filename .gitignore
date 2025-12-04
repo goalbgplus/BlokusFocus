@@ -1,1 +1,31 @@
+# Build output
+/dist/
+/.ghdeploy/
+/.ghdeploy_tmp/
+
+# Node modules
 node_modules/
+
+# Android/web build artifacts
+/android/
+
+# IDE / OS files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# env files
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.swp
+
+# Maps (optional)
+*.map
