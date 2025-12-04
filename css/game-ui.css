@@ -595,8 +595,8 @@ body .dragged-piece-clone .piece-grid {
     -webkit-backdrop-filter: blur(var(--glass-blur));
     position: relative;
     inset: auto;
-    width: min(100%, var(--game-shell-max-width));
-    max-width: 100%;
+    width: 100%;
+    max-width: none;
     min-height: var(--view-height);
     height: auto;
     margin: 0 auto;
@@ -614,6 +614,13 @@ body .dragged-piece-clone .piece-grid {
     width: min(100%, calc(var(--game-grid-total-size) + 32px));
     max-width: 100%;
     margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .game-container {
+        width: min(100%, var(--game-shell-max-width));
+        max-width: 100%;
+    }
 }
 
 /* Panel Animations relocated from style.css */
