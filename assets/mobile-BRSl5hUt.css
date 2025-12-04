@@ -1,6 +1,7 @@
 /* Mobile-specific overrides and simplified visuals
    Loaded only on screens <= 768px via media attribute in index.html.
    Keep heavy visual effects minimal here for performance on phones.
+   Build: 2024-12-04-v3
 */
 
 :root {
