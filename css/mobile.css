@@ -258,7 +258,9 @@
     /* Grid sizing already defined at :root level above */
     .game-grid {
         width: min(100%, var(--game-grid-total-size)) !important;
+        min-width: 280px !important;
         height: var(--game-grid-total-size) !important;
+        min-height: 280px !important;
         max-width: 100% !important;
         max-height: none !important;
         padding: var(--game-grid-padding) !important;
@@ -267,7 +269,9 @@
     /* Scale container to match grid size */
     .game-grid-container {
         width: auto !important;
+        min-width: 280px !important;
         height: auto !important;
+        min-height: 280px !important;
         max-width: min(100%, calc(var(--game-grid-total-size) + 32px)) !important;
         max-height: none !important;
         padding: var(--game-grid-padding) !important;
@@ -277,8 +281,10 @@
 
     .game-area {
         width: 100% !important;
+        min-width: 280px !important;
         max-width: min(100%, calc(var(--game-grid-total-size) + 32px)) !important;
         height: auto !important;
+        min-height: 280px !important;
         display: flex !important;
         justify-content: center !important;
         align-items: center !important;
