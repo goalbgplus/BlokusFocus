@@ -362,7 +362,7 @@
     .game-container {
         padding: 0 !important;
         padding: clamp(20px, 4vh, 32px) clamp(16px, 6vw, 28px) clamp(140px, 18vh, 180px) clamp(16px, 6vw, 28px) !important;
-        padding-top: max(env(safe-area-inset-top, 0px) + 18px, clamp(28px, 5vh, 44px)) !important;
+        padding-top: calc(env(safe-area-inset-top, 0px) + clamp(36px, 7vh, 68px)) !important;
         min-height: 100dvh !important;
         height: auto !important;
         max-height: none !important;
@@ -387,7 +387,8 @@
         width: 100% !important;
         flex-shrink: 0;
         padding: 0 !important;
-        margin: 0 0 clamp(8px, 2vh, 16px) 0 !important;
+        margin: clamp(0px, 0.8vh, 10px) 0 clamp(6px, 1.6vh, 14px) 0 !important;
+        padding-top: clamp(2px, 1vh, 10px) !important;
         z-index: 20 !important;
     }
 
@@ -432,8 +433,8 @@
     }
 
     body:not([data-theme="dark"]) .special-actions {
-        max-width: 100% !important;
-        margin: 0 !important;
+        max-width: min(96vw, 540px) !important;
+        margin: 0 auto !important;
         border-radius: 16px !important;
         border-width: 1.5px !important;
     }
@@ -447,10 +448,10 @@
         max-width: 100% !important;
         margin: 0 !important;
         display: flex !important;
-        justify-content: center !important;
+        justify-content: space-around !important;
         align-items: center !important;
-        padding: 10px clamp(18px, 7vw, 32px) !important;
-        gap: clamp(1.5rem, 8vw, 3.25rem) !important;
+        padding: clamp(12px, 3vh, 18px) clamp(8px, 3vw, 16px) !important;
+        gap: clamp(0.5rem, 6vw, 2rem) !important;
         background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.2) 70%, rgba(0,0,0,0.32) 100%) !important;
         box-shadow: 0 -4px 16px rgba(0,0,0,0.3) !important;
         backdrop-filter: blur(8px) !important;
