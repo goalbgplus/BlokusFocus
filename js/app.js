@@ -145,10 +145,27 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Use absolute path to the repo base so it works on GitHub Pages.
 	try {
 		if ('serviceWorker' in navigator) {
-			// Register with repo base path; this file is copied from `public/sw.js` into `dist/sw.js`.
-			navigator.serviceWorker.register('/BlokusFocus/sw.js')
-				.then(reg => console.log('ServiceWorker registered:', reg.scope))
-				.catch(err => console.warn('ServiceWorker registration failed:', err));
+			// Register service worker with prefetch check to avoid noisy 404 logs.
+			// Try repo base (`/BlokusFocus/sw.js`) first, then fall back to `/sw.js`.
+			(async () => {
+				const candidates = ['/BlokusFocus/sw.js', '/sw.js'];
+				for (const swPath of candidates) {
+					try {
+						// Prefetch to check if the script exists before registration
+						const resp = await fetch(swPath, { method: 'HEAD', cache: 'no-store' });
+						if (!resp.ok) {
+							console.debug('SW not found at', swPath);
+							continue;
+						}
+						const reg = await navigator.serviceWorker.register(swPath);
+						console.log('ServiceWorker registered with', swPath, 'scope:', reg.scope);
+						break;
+					} catch (err) {
+						console.debug('SW registration attempt failed for', swPath);
+						// try next candidate
+					}
+				}
+			})();
 		}
 	} catch (e) {
 		console.warn('ServiceWorker registration error', e);

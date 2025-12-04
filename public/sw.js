@@ -1,5 +1,5 @@
 // Cache name updated to force clients to pick up new assets when deployed
-const CACHE='blokus-grid-v3';
+const CACHE='blokus-grid-v4';
 
 self.addEventListener('install', e => self.skipWaiting());
 
