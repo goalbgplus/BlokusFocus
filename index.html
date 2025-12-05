@@ -82,40 +82,42 @@
     </style>
         <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
         <!-- Cache busting: add ?v=X.X to force reload on changes -->
-        <link rel="preload" href="css/themes.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/style.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/landing-page-clean.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/game-ui.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/desktop.css?v=3.1" as="style" media="(min-width:769px)" onload="this.onload=null;this.rel='stylesheet'">
-        <link rel="preload" href="css/mobile.css?v=3.1" as="style" media="(max-width:768px)" onload="this.onload=null;this.rel='stylesheet'">
+        <!-- GitHub Pages: Using absolute paths /BlokusFocus/ for proper asset loading -->
+        <link rel="preload" href="/BlokusFocus/css/themes.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/css/style.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/css/landing-page-clean.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/css/game-ui.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/css/desktop.css?v=3.1" as="style" media="(min-width:769px)" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="/BlokusFocus/css/mobile.css?v=3.1" as="style" media="(max-width:768px)" onload="this.onload=null;this.rel='stylesheet'">
         <noscript>
-            <link rel="stylesheet" href="css/themes.css?v=3.0">
-            <link rel="stylesheet" href="css/style.css?v=3.0">
-            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.0">
-            <link rel="stylesheet" href="css/game-ui.css?v=3.0">
-            <link rel="stylesheet" href="css/desktop.css?v=3.0" media="(min-width:769px)">
-            <link rel="stylesheet" href="css/mobile.css?v=3.0" media="(max-width:768px)">
+            <link rel="stylesheet" href="/BlokusFocus/css/themes.css?v=3.0">
+            <link rel="stylesheet" href="/BlokusFocus/css/style.css?v=3.0">
+            <link rel="stylesheet" href="/BlokusFocus/css/landing-page-clean.css?v=3.0">
+            <link rel="stylesheet" href="/BlokusFocus/css/game-ui.css?v=3.0">
+            <link rel="stylesheet" href="/BlokusFocus/css/desktop.css?v=3.0" media="(min-width:769px)">
+            <link rel="stylesheet" href="/BlokusFocus/css/mobile.css?v=3.0" media="(max-width:768px)">
         </noscript>
     <!-- Animation CSS - load via idle callback -->
     <script>
     // Defer non-critical CSS until browser idle
     // Cache busting: add ?v=X.X to force reload on changes
+    // GitHub Pages: Using absolute paths /BlokusFocus/ for proper asset loading
     const deferCSS=['special-mode','row-clear','galaxy-row-clear','color-burst','special-actions','tutorialAnimation','game-background'];
     const VERSION='3.1';
     if('requestIdleCallback' in window){
-        requestIdleCallback(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}));
+        requestIdleCallback(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='/BlokusFocus/css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}));
     }else{
-        window.addEventListener('load',()=>setTimeout(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}),100));
+        window.addEventListener('load',()=>setTimeout(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='/BlokusFocus/css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}),100));
     }
     </script>
     <noscript>
-        <link rel="stylesheet" href="css/special-mode.css?v=3.0">
-        <link rel="stylesheet" href="css/row-clear.css?v=3.0">
-        <link rel="stylesheet" href="css/galaxy-row-clear.css?v=3.0">
-        <link rel="stylesheet" href="css/color-burst.css?v=3.0">
-        <link rel="stylesheet" href="css/special-actions.css?v=3.0">
-        <link rel="stylesheet" href="css/tutorialAnimation.css?v=3.0">
-        <link rel="stylesheet" href="css/game-background.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/special-mode.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/row-clear.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/galaxy-row-clear.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/color-burst.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/special-actions.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/tutorialAnimation.css?v=3.0">
+        <link rel="stylesheet" href="/BlokusFocus/css/game-background.css?v=3.0">
     </noscript>
     <!-- Manifest will be injected dynamically (skipped in dev to avoid 404) -->
 </head>
@@ -326,5 +328,5 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"
                 integrity="sha512-aK/tUNiLozMpB8o1+j5j5+hP8Y1Sx3Fwb1mKiU3y+0CPYvvXLV6FIpJZBfmVZ4qYaHDvYWQlhknE8N55aqWWQ=="
                 crossorigin="anonymous" defer></script>
-        <script src="./js/debugGridMobile.js?v=3.0" type="module"></script>
-        <script src="./js/app.js?v=3.0" type="module"></script>
+        <script src="/BlokusFocus/js/debugGridMobile.js?v=3.0" type="module"></script>
+        <script src="/BlokusFocus/js/app.js?v=3.0" type="module"></script>
