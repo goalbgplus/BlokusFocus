@@ -165,6 +165,14 @@ export function initLanding() {
             localStorage.setItem('selectedGameMode', selectedMode);
             const landingPage = document.getElementById('landingPage');
             const gameContainer = document.querySelector('.game-container');
+            
+            // 🎮 SHFAQ GAME CONTAINER - Remove .hidden class so grid becomes visible
+            if (gameContainer) {
+                gameContainer.classList.remove('hidden');
+                console.log('✅ GAME CONTAINER VISIBLE - .hidden class removed');
+                console.log('📏 Grid should now be visible in .game-area > .game-grid');
+            }
+            
             if (!hasLoadedOnce) {
                 // Lazy-load game code modules
                 import('./main.js').then(({ initMain }) => {

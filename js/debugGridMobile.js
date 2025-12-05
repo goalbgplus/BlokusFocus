@@ -6,7 +6,7 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         console.log("📏 --- FILLIMI I MATJEVE ---");
         
         const root = document.documentElement;
-        const gridContainer = document.querySelector('.game-grid-container');
+        const gameContainer = document.querySelector('.game-container');
         const grid = document.querySelector('.game-grid');
         const gameArea = document.querySelector('.game-area');
         
@@ -29,15 +29,24 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         console.log('--view-height:', viewHeight);
         console.log('--mobile-grid-max-size:', mobileGridMaxSize);
         
-        if (gridContainer) {
-            const containerRect = gridContainer.getBoundingClientRect();
-            console.log('%c.game-grid-container (actual):', 'color: #00FF00; font-weight: bold;');
+        // Check .game-container visibility
+        if (gameContainer) {
+            const containerRect = gameContainer.getBoundingClientRect();
+            console.log('%c.game-container:', 'color: #FF00FF; font-weight: bold;');
+            console.log(`Has .hidden: ${gameContainer.classList.contains('hidden')}`);
             console.log(`Width: ${containerRect.width}px, Height: ${containerRect.height}px`);
-            console.log(`Padding: ${getComputedStyle(gridContainer).padding}`);
-            console.log(`Display: ${getComputedStyle(gridContainer).display}`);
-            console.log(`Visibility: ${getComputedStyle(gridContainer).visibility}`);
         } else {
-            console.error("❌ GABIM: Elementi .game-grid-container NUK u gjet në DOM!");
+            console.warn("⚠️ .game-container nuk ekziston në DOM!");
+        }
+        
+        if (gameArea) {
+            const areaRect = gameArea.getBoundingClientRect();
+            console.log('%c.game-area (actual):', 'color: #FF69B4; font-weight: bold;');
+            console.log(`Width: ${areaRect.width}px, Height: ${areaRect.height}px`);
+            console.log(`Display: ${getComputedStyle(gameArea).display}`);
+            console.log(`Visibility: ${getComputedStyle(gameArea).visibility}`);
+        } else {
+            console.warn("⚠️ PARALAJMËRIM: .game-area nuk u gjet!");
         }
         
         if (grid) {
@@ -49,17 +58,6 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
             console.log(`Visibility: ${getComputedStyle(grid).visibility}`);
         } else {
             console.error("❌ GABIM: Elementi .game-grid NUK u gjet në DOM!");
-        }
-        
-        if (gameArea) {
-            const areaRect = gameArea.getBoundingClientRect();
-            console.log('%c.game-area (actual):', 'color: #FF69B4; font-weight: bold;');
-            console.log(`Width: ${areaRect.width}px, Height: ${areaRect.height}px`);
-            console.log(`Display: ${getComputedStyle(gameArea).display}`);
-            console.log(`Justify-content: ${getComputedStyle(gameArea).justifyContent}`);
-            console.log(`Align-items: ${getComputedStyle(gameArea).alignItems}`);
-        } else {
-            console.warn("⚠️ PARALAJMËRIM: .game-area nuk u gjet!");
         }
         
         console.log('%cViewport:', 'color: #FF1493; font-weight: bold;');
@@ -76,6 +74,24 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         document.addEventListener('DOMContentLoaded', logGridDimensions);
     } else {
         logGridDimensions();
+    }
+    
+    // Re-run measurements after game starts (when container loses .hidden)
+    // Listen for .game-container visibility changes
+    const observer = new MutationObserver(() => {
+        const gc = document.querySelector('.game-container');
+        if (gc && !gc.classList.contains('hidden')) {
+            console.log('🔄 GAME STARTED - Re-running grid measurements...');
+            setTimeout(() => {
+                logGridDimensions();
+                window.debugGrid = logGridDimensions;
+            }, 100);
+        }
+    });
+    
+    const gameContainer = document.querySelector('.game-container');
+    if (gameContainer) {
+        observer.observe(gameContainer, { attributes: true, attributeFilter: ['class'] });
     }
     
     // Also expose a function to call from console
