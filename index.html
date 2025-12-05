@@ -26,7 +26,7 @@
          5. Script src: js/app.js?v=X.X (line ~318)
          This forces full cache busting so users see changes immediately!
     -->
-    <meta name="app-version" content="v3.4">
+    <meta name="app-version" content="v3.5">
     <!-- Cache busting - forces browser to reload all assets -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -103,26 +103,26 @@
         <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
         <!-- Cache busting: add ?v=X.X to force reload on changes -->
         <!-- Core CSS loaded as regular stylesheets for reliability -->
-        <link rel="stylesheet" href="css/themes.css?v=3.4">
-        <link rel="stylesheet" href="css/style.css?v=3.4">
-        <link rel="stylesheet" href="css/landing-page-clean.css?v=3.4">
-        <link rel="stylesheet" href="css/game-ui.css?v=3.4">
-        <link rel="stylesheet" href="css/desktop.css?v=3.4" media="(min-width:769px)">
-        <link rel="stylesheet" href="css/mobile.css?v=3.4" media="(max-width:768px)">
+        <link rel="stylesheet" href="css/themes.css?v=3.5">
+        <link rel="stylesheet" href="css/style.css?v=3.5">
+        <link rel="stylesheet" href="css/landing-page-clean.css?v=3.5">
+        <link rel="stylesheet" href="css/game-ui.css?v=3.5">
+        <link rel="stylesheet" href="css/desktop.css?v=3.5" media="(min-width:769px)">
+        <link rel="stylesheet" href="css/mobile.css?v=3.5" media="(max-width:768px)">
         <noscript>
-            <link rel="stylesheet" href="css/themes.css?v=3.4">
-            <link rel="stylesheet" href="css/style.css?v=3.4">
-            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.4">
-            <link rel="stylesheet" href="css/game-ui.css?v=3.4">
-            <link rel="stylesheet" href="css/desktop.css?v=3.4" media="(min-width:769px)">
-            <link rel="stylesheet" href="css/mobile.css?v=3.4" media="(max-width:768px)">
+            <link rel="stylesheet" href="css/themes.css?v=3.5">
+            <link rel="stylesheet" href="css/style.css?v=3.5">
+            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.5">
+            <link rel="stylesheet" href="css/game-ui.css?v=3.5">
+            <link rel="stylesheet" href="css/desktop.css?v=3.5" media="(min-width:769px)">
+            <link rel="stylesheet" href="css/mobile.css?v=3.5" media="(max-width:768px)">
         </noscript>
     <!-- Animation CSS - load via idle callback -->
     <script>
     // Defer non-critical CSS until browser idle
     // Cache busting: add ?v=X.X to force reload on changes
     const deferCSS=['special-mode','row-clear','galaxy-row-clear','color-burst','special-actions','tutorialAnimation','game-background'];
-    const VERSION='3.4';
+    const VERSION='3.5';
     if('requestIdleCallback' in window){
         requestIdleCallback(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}));
     }else{
@@ -348,4 +348,4 @@
                 crossorigin="anonymous" defer></script>
         <script src="./scripts/debugLayout.js?v=1.0"></script>
         <script src="./js/debugGridMobile.js?v=3.0" type="module"></script>
-        <script src="./js/app.js?v=3.0" type="module"></script>
+        <script src="./js/app.js?v=3.5" type="module"></script>
