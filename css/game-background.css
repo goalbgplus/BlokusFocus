@@ -106,9 +106,6 @@
     /* Floating pieces wrapper */
     .game-container .floating-pieces {
         position: absolute; inset: 0; pointer-events: none; z-index: -2;
-        overflow: hidden !important;
-        width: 100% !important;
-        height: 100% !important;
     }
 
     /* Puzzle piece – bazë responsive me clamp() */

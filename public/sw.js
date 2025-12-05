@@ -1,21 +1,13 @@
 // Cache name updated to force clients to pick up new assets when deployed
-// IMPORTANT: Increment this version to force cache bust
-const CACHE='blokus-grid-v8';
-const CSS_VERSION = '3.5';
+const CACHE='blokus-grid-v4';
 
-self.addEventListener('install', e => {
-	// Skip waiting to activate immediately
-	self.skipWaiting();
-});
+self.addEventListener('install', e => self.skipWaiting());
 
 self.addEventListener('activate', e => {
 	e.waitUntil((async () => {
-		// Delete ALL old caches
 		const keys = await caches.keys();
-		await Promise.all(keys.map(k => caches.delete(k)));
-		// Claim all clients immediately
+		await Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)));
 		await self.clients.claim();
-		console.log('[SW] Activated v7, cleared all caches');
 	})());
 });
 
@@ -35,27 +27,6 @@ self.addEventListener('fetch', e => {
 		return;
 	}
 
-	// For CSS and JS files, always try network first (critical for updates)
-	if (url.pathname.endsWith('.css') || url.pathname.endsWith('.js')) {
-		e.respondWith((async () => {
-			try {
-				const resp = await fetch(req);
-				// Only cache successful responses
-				if (resp.ok) {
-					const cache = await caches.open(CACHE);
-					cache.put(req, resp.clone());
-				}
-				return resp;
-			} catch (err) {
-				// Fallback to cache only if network fails
-				const cached = await caches.match(req);
-				return cached || Response.error();
-			}
-		})());
-		return;
-	}
-
-	// For other assets, use cache-first
 	if (url.origin === location.origin) {
 		e.respondWith((async () => {
 			const cached = await caches.match(req);

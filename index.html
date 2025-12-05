@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <!-- Cache control for aggressive refresh -->
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
     <meta name="description" content="GOALBG - Addictive block puzzle game. Place pieces strategically, clear lines, and beat your high score on mobile and desktop.">
     <meta name="theme-color" content="#0b1220" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
@@ -26,7 +22,7 @@
          5. Script src: js/app.js?v=X.X (line ~318)
          This forces full cache busting so users see changes immediately!
     -->
-    <meta name="app-version" content="v3.5">
+    <meta name="app-version" content="v3.1">
     <!-- Cache busting - forces browser to reload all assets -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
@@ -83,46 +79,29 @@
         @media (prefers-reduced-motion: reduce){
             *{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important}
         }
-        /* CRITICAL: Mobile CSS variables injected inline for guaranteed mobile layout */
-        /* These MUST load before any other CSS that uses --grid-cell-size, etc. */
-        @media (max-width: 768px) {
-            :root {
-                /* Mobile dimensions - responsive sizing based on viewport height */
-                --grid-cell-size: clamp(29px, 5.5vh, 36px) !important;
-                --piece-block-size: calc(var(--grid-cell-size) * 0.7) !important;
-                
-                /* Calculate grid total size for mobile */
-                --game-grid-gap: 2px !important;
-                --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap)) !important;
-                --game-grid-padding: 16px !important;
-                --game-grid-border: 2px !important;
-                --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border)) !important;
-            }
-        }
     </style>
         <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
         <!-- Cache busting: add ?v=X.X to force reload on changes -->
-        <!-- Core CSS loaded as regular stylesheets for reliability -->
-        <link rel="stylesheet" href="css/themes.css?v=3.5">
-        <link rel="stylesheet" href="css/style.css?v=3.5">
-        <link rel="stylesheet" href="css/landing-page-clean.css?v=3.5">
-        <link rel="stylesheet" href="css/game-ui.css?v=3.5">
-        <link rel="stylesheet" href="css/desktop.css?v=3.5" media="(min-width:769px)">
-        <link rel="stylesheet" href="css/mobile.css?v=3.5" media="(max-width:768px)">
+        <link rel="preload" href="css/themes.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="css/style.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="css/landing-page-clean.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="css/game-ui.css?v=3.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="css/desktop.css?v=3.1" as="style" media="(min-width:769px)" onload="this.onload=null;this.rel='stylesheet'">
+        <link rel="preload" href="css/mobile.css?v=3.1" as="style" media="(max-width:768px)" onload="this.onload=null;this.rel='stylesheet'">
         <noscript>
-            <link rel="stylesheet" href="css/themes.css?v=3.5">
-            <link rel="stylesheet" href="css/style.css?v=3.5">
-            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.5">
-            <link rel="stylesheet" href="css/game-ui.css?v=3.5">
-            <link rel="stylesheet" href="css/desktop.css?v=3.5" media="(min-width:769px)">
-            <link rel="stylesheet" href="css/mobile.css?v=3.5" media="(max-width:768px)">
+            <link rel="stylesheet" href="css/themes.css?v=3.0">
+            <link rel="stylesheet" href="css/style.css?v=3.0">
+            <link rel="stylesheet" href="css/landing-page-clean.css?v=3.0">
+            <link rel="stylesheet" href="css/game-ui.css?v=3.0">
+            <link rel="stylesheet" href="css/desktop.css?v=3.0" media="(min-width:769px)">
+            <link rel="stylesheet" href="css/mobile.css?v=3.0" media="(max-width:768px)">
         </noscript>
     <!-- Animation CSS - load via idle callback -->
     <script>
     // Defer non-critical CSS until browser idle
     // Cache busting: add ?v=X.X to force reload on changes
     const deferCSS=['special-mode','row-clear','galaxy-row-clear','color-burst','special-actions','tutorialAnimation','game-background'];
-    const VERSION='3.5';
+    const VERSION='3.1';
     if('requestIdleCallback' in window){
         requestIdleCallback(()=>deferCSS.forEach(n=>{const l=document.createElement('link');l.rel='stylesheet';l.href='css/'+n+'.css?v='+VERSION;document.head.appendChild(l);}));
     }else{
@@ -345,7 +324,7 @@
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/tinycolor/1.6.0/tinycolor.min.js"
+                integrity="sha512-aK/tUNiLozMpB8o1+j5j5+hP8Y1Sx3Fwb1mKiU3y+0CPYvvXLV6FIpJZBfmVZ4qYaHDvYWQlhknE8N55aqWWQ=="
                 crossorigin="anonymous" defer></script>
-        <script src="./scripts/debugLayout.js?v=1.0"></script>
         <script src="./js/debugGridMobile.js?v=3.0" type="module"></script>
-        <script src="./js/app.js?v=3.5" type="module"></script>
+        <script src="./js/app.js?v=3.0" type="module"></script>
