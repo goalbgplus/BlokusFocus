@@ -868,4 +868,18 @@
     }
 }
 
-
+/* ========================================
+   NUCLEAR SPECIFICITY OVERRIDE (v5.0)
+   ID + Class = Strongest selector
+   Forces transparent pieces container on mobile
+   ======================================== */
+@media (max-width: 768px) {
+    #piecesContainer.pieces-container {
+        background: transparent !important;
+        background-color: transparent !important;
+        box-shadow: none !important;
+        border: none !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}
