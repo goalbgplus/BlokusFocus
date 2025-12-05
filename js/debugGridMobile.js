@@ -1,6 +1,10 @@
 // Debug logging for mobile grid sizing
+console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
+
 (function() {
     function logGridDimensions() {
+        console.log("📏 --- FILLIMI I MATJEVE ---");
+        
         const root = document.documentElement;
         const gridContainer = document.querySelector('.game-grid-container');
         const grid = document.querySelector('.game-grid');
@@ -30,7 +34,10 @@
             console.log('%c.game-grid-container (actual):', 'color: #00FF00; font-weight: bold;');
             console.log(`Width: ${containerRect.width}px, Height: ${containerRect.height}px`);
             console.log(`Padding: ${getComputedStyle(gridContainer).padding}`);
-            console.log(`Border-radius: ${getComputedStyle(gridContainer).borderRadius}`);
+            console.log(`Display: ${getComputedStyle(gridContainer).display}`);
+            console.log(`Visibility: ${getComputedStyle(gridContainer).visibility}`);
+        } else {
+            console.error("❌ GABIM: Elementi .game-grid-container NUK u gjet në DOM!");
         }
         
         if (grid) {
@@ -38,9 +45,10 @@
             console.log('%c.game-grid (actual):', 'color: #00BFFF; font-weight: bold;');
             console.log(`Width: ${gridRect.width}px, Height: ${gridRect.height}px`);
             console.log(`Padding: ${getComputedStyle(grid).padding}`);
-            console.log(`Border-radius: ${getComputedStyle(grid).borderRadius}`);
-            console.log(`Max-width: ${getComputedStyle(grid).maxWidth}`);
-            console.log(`Max-height: ${getComputedStyle(grid).maxHeight}`);
+            console.log(`Display: ${getComputedStyle(grid).display}`);
+            console.log(`Visibility: ${getComputedStyle(grid).visibility}`);
+        } else {
+            console.error("❌ GABIM: Elementi .game-grid NUK u gjet në DOM!");
         }
         
         if (gameArea) {
@@ -50,6 +58,8 @@
             console.log(`Display: ${getComputedStyle(gameArea).display}`);
             console.log(`Justify-content: ${getComputedStyle(gameArea).justifyContent}`);
             console.log(`Align-items: ${getComputedStyle(gameArea).alignItems}`);
+        } else {
+            console.warn("⚠️ PARALAJMËRIM: .game-area nuk u gjet!");
         }
         
         console.log('%cViewport:', 'color: #FF1493; font-weight: bold;');
@@ -58,6 +68,7 @@
         console.log(`Is mobile (<= 768px): ${window.innerWidth <= 768}`);
         
         console.groupEnd();
+        console.log("📏 --- FUNDI I MATJEVE ---");
     }
     
     // Run on page load
