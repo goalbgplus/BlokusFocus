@@ -83,6 +83,22 @@
         @media (prefers-reduced-motion: reduce){
             *{animation-duration:0.001ms!important;animation-iteration-count:1!important;transition-duration:0.001ms!important}
         }
+        /* CRITICAL: Mobile CSS variables injected inline for guaranteed mobile layout */
+        /* These MUST load before any other CSS that uses --grid-cell-size, etc. */
+        @media (max-width: 768px) {
+            :root {
+                /* Mobile dimensions - responsive sizing based on viewport height */
+                --grid-cell-size: clamp(29px, 5.5vh, 36px) !important;
+                --piece-block-size: calc(var(--grid-cell-size) * 0.7) !important;
+                
+                /* Calculate grid total size for mobile */
+                --game-grid-gap: 2px !important;
+                --game-grid-content-size: calc(10 * var(--grid-cell-size) + 9 * var(--game-grid-gap)) !important;
+                --game-grid-padding: 16px !important;
+                --game-grid-border: 2px !important;
+                --game-grid-total-size: calc(var(--game-grid-content-size) + 2 * var(--game-grid-padding) + 2 * var(--game-grid-border)) !important;
+            }
+        }
     </style>
         <!-- Core CSS: preload then apply to reduce FOUC without blocking -->
         <!-- Cache busting: add ?v=X.X to force reload on changes -->
