@@ -238,9 +238,6 @@
         -webkit-backdrop-filter: blur(6px) !important;
         border: 1px solid rgba(255, 255, 255, 0.12) !important; /* Slightly more subtle */
         border-radius: 32px !important; /* Match container rounded corners */
-        /* ✅ RESPONSIVE SIZING: Scales with viewport like background overlay */
-        width: clamp(280px, 85vw, 380px) !important;
-        height: clamp(280px, 85vw, 380px) !important;
     }
     
     /* Eliminate any extra space below special actions */
