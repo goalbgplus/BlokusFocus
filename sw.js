@@ -1,7 +1,7 @@
 // Cache name updated to force clients to pick up new assets when deployed
 // IMPORTANT: Increment this version to force cache bust
-const CACHE='blokus-grid-v7';
-const CSS_VERSION = '3.3';
+const CACHE='blokus-grid-v8';
+const CSS_VERSION = '3.5';
 
 self.addEventListener('install', e => {
 	// Skip waiting to activate immediately
