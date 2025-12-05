@@ -883,3 +883,83 @@
         -webkit-backdrop-filter: none !important;
     }
 }
+
+/* ========================================
+   MOBILE SIZE OVERRIDES (v5.0)
+   Fix puzzle-piece wallpaper and piece-block sizes
+   ======================================== */
+@media (max-width: 768px) {
+    /* Background wallpaper puzzle pieces - MUCH SMALLER on mobile */
+    body .game-container .puzzle-piece,
+    .game-container .floating-pieces .puzzle-piece {
+        width: clamp(20px, 4vw, 40px) !important;
+        height: clamp(20px, 4vw, 40px) !important;
+        border-radius: clamp(4px, 0.8vw, 8px) !important;
+        opacity: 0.4 !important;
+    }
+    
+    /* Even smaller variants */
+    body .game-container .puzzle-piece:nth-child(7),
+    body .game-container .puzzle-piece:nth-child(8) {
+        width: clamp(15px, 3vw, 30px) !important;
+        height: clamp(15px, 3vw, 30px) !important;
+    }
+    
+    /* Glow effects - smaller on mobile */
+    body .game-container .glow {
+        width: clamp(80px, 20vw, 120px) !important;
+        height: clamp(80px, 20vw, 120px) !important;
+        filter: blur(30px) !important;
+        opacity: 0.3 !important;
+    }
+    
+    /* Playable piece blocks in the container - correct size */
+    #piecesContainer .piece-block,
+    .pieces-container .piece-block,
+    body .pieces-container .piece-block {
+        width: calc(var(--grid-cell-size) * 0.7) !important;
+        height: calc(var(--grid-cell-size) * 0.7) !important;
+        min-width: 18px !important;
+        min-height: 18px !important;
+        max-width: 28px !important;
+        max-height: 28px !important;
+    }
+    
+    /* Piece inventory items - keep compact */
+    #piecesContainer .piece,
+    .pieces-container .piece,
+    body .pieces-container .piece {
+        transform: scale(0.85) !important;
+        max-width: 90px !important;
+        max-height: 90px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Even smaller wallpaper pieces on small phones */
+    body .game-container .puzzle-piece,
+    .game-container .floating-pieces .puzzle-piece {
+        width: clamp(15px, 3.5vw, 30px) !important;
+        height: clamp(15px, 3.5vw, 30px) !important;
+        opacity: 0.3 !important;
+    }
+    
+    /* Playable piece blocks - slightly smaller on small phones */
+    #piecesContainer .piece-block,
+    .pieces-container .piece-block {
+        width: calc(var(--grid-cell-size) * 0.65) !important;
+        height: calc(var(--grid-cell-size) * 0.65) !important;
+        min-width: 16px !important;
+        min-height: 16px !important;
+        max-width: 24px !important;
+        max-height: 24px !important;
+    }
+    
+    /* Smaller piece inventory on small phones */
+    #piecesContainer .piece,
+    .pieces-container .piece {
+        transform: scale(0.75) !important;
+        max-width: 75px !important;
+        max-height: 75px !important;
+    }
+}
