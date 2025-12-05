@@ -4,6 +4,25 @@
    Build: 2024-12-04-v3
 */
 
+/* =====================================================================
+   CRITICAL OVERRIDE: Ensure game-container is visible on mobile devices
+   This MUST override .game-container.hidden { display: none !important; }
+   from game-ui.css. This rule applies when media="(max-width:768px)" matches.
+   ===================================================================== */
+.game-container.hidden {
+    display: flex !important;
+    flex-direction: column !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100dvh !important;
+    position: relative !important;
+    transform: none !important;
+    transition: none !important;
+}
+
 :root {
     /* Mobile dimensions - responsive sizing based on viewport height */
     --grid-cell-size: clamp(29px, 5.5vh, 36px); /* Scales between 29-36px based on viewport */
@@ -290,6 +309,22 @@
         overflow: hidden !important;
     }
     
+    /* CRITICAL MOBILE OVERRIDE: Show game-container even if .hidden class is applied */
+    /* This MUST override .game-container.hidden { display: none !important; } from game-ui.css */
+    .game-container.hidden {
+        display: flex !important;
+        flex-direction: column !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 100dvh !important;
+        position: relative !important;
+        transform: none !important;
+        transition: none !important;
+    }
+    
     /* CRITICAL: Ensure game-container is visible during gameplay on mobile */
     .game-container.show,
     .game-container:not(.hidden) {
@@ -301,14 +336,6 @@
         height: auto !important;
         min-height: 100dvh !important;
         position: relative !important;
-    }
-    
-    /* Override hidden state to ensure it's truly hidden when needed */
-    .game-container.hidden {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
     }
 
     /* Grid sizing already defined at :root level above */
