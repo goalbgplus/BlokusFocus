@@ -13,7 +13,8 @@
 
 :root {
     /* Ensure consistent block sizes between inventory and game arena */
-    --grid-cell-size: 40px;
+    /* 🔄 RESPONSIVE: grid-cell-size now adapts to viewport (clamp between 18px and 40px) */
+    --grid-cell-size: clamp(18px, 8vw, 40px);
     --piece-block-size: var(--grid-cell-size); /* Match block size to grid cell size */
 
     /* Variablat ekzistuese të lojës suaj */
@@ -47,7 +48,8 @@
             justify-content: center;
             align-items: center;
             flex: none;
-            width: auto; /* auto size to content */
+            /* 🔄 RESPONSIVE: Allow 100% width so grid can shrink with viewport */
+            width: 100%;
             height: auto; /* auto size to content */
             padding: 0;
             box-sizing: border-box;
@@ -128,10 +130,11 @@
             grid-template-columns: repeat(10, var(--grid-cell-size));
             grid-template-rows: repeat(10, var(--grid-cell-size));
             gap: var(--grid-gap);
-            width: var(--game-grid-total-size);
-            height: var(--game-grid-total-size);
-            max-width: none !important;
-            max-height: none !important;
+            /* 🔄 RESPONSIVE: Use min() to adapt width to parent but keep ideal size */
+            width: min(var(--game-grid-total-size), calc(100% - 40px));
+            height: auto; /* Let height follow width to maintain square aspect ratio */
+            max-width: 100%;
+            max-height: 100%;
             padding: var(--game-grid-padding);
             background: rgba(255, 255, 255, 0.1);
             border-radius: 28px;

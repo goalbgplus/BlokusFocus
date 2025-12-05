@@ -1,12 +1,8 @@
 // Debug logging for mobile grid sizing
-console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
-
 (function() {
     function logGridDimensions() {
-        console.log("📏 --- FILLIMI I MATJEVE ---");
-        
         const root = document.documentElement;
-        const gameContainer = document.querySelector('.game-container');
+        const gridContainer = document.querySelector('.game-grid-container');
         const grid = document.querySelector('.game-grid');
         const gameArea = document.querySelector('.game-area');
         
@@ -29,24 +25,12 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         console.log('--view-height:', viewHeight);
         console.log('--mobile-grid-max-size:', mobileGridMaxSize);
         
-        // Check .game-container visibility
-        if (gameContainer) {
-            const containerRect = gameContainer.getBoundingClientRect();
-            console.log('%c.game-container:', 'color: #FF00FF; font-weight: bold;');
-            console.log(`Has .hidden: ${gameContainer.classList.contains('hidden')}`);
+        if (gridContainer) {
+            const containerRect = gridContainer.getBoundingClientRect();
+            console.log('%c.game-grid-container (actual):', 'color: #00FF00; font-weight: bold;');
             console.log(`Width: ${containerRect.width}px, Height: ${containerRect.height}px`);
-        } else {
-            console.warn("⚠️ .game-container nuk ekziston në DOM!");
-        }
-        
-        if (gameArea) {
-            const areaRect = gameArea.getBoundingClientRect();
-            console.log('%c.game-area (actual):', 'color: #FF69B4; font-weight: bold;');
-            console.log(`Width: ${areaRect.width}px, Height: ${areaRect.height}px`);
-            console.log(`Display: ${getComputedStyle(gameArea).display}`);
-            console.log(`Visibility: ${getComputedStyle(gameArea).visibility}`);
-        } else {
-            console.warn("⚠️ PARALAJMËRIM: .game-area nuk u gjet!");
+            console.log(`Padding: ${getComputedStyle(gridContainer).padding}`);
+            console.log(`Border-radius: ${getComputedStyle(gridContainer).borderRadius}`);
         }
         
         if (grid) {
@@ -54,10 +38,18 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
             console.log('%c.game-grid (actual):', 'color: #00BFFF; font-weight: bold;');
             console.log(`Width: ${gridRect.width}px, Height: ${gridRect.height}px`);
             console.log(`Padding: ${getComputedStyle(grid).padding}`);
-            console.log(`Display: ${getComputedStyle(grid).display}`);
-            console.log(`Visibility: ${getComputedStyle(grid).visibility}`);
-        } else {
-            console.error("❌ GABIM: Elementi .game-grid NUK u gjet në DOM!");
+            console.log(`Border-radius: ${getComputedStyle(grid).borderRadius}`);
+            console.log(`Max-width: ${getComputedStyle(grid).maxWidth}`);
+            console.log(`Max-height: ${getComputedStyle(grid).maxHeight}`);
+        }
+        
+        if (gameArea) {
+            const areaRect = gameArea.getBoundingClientRect();
+            console.log('%c.game-area (actual):', 'color: #FF69B4; font-weight: bold;');
+            console.log(`Width: ${areaRect.width}px, Height: ${areaRect.height}px`);
+            console.log(`Display: ${getComputedStyle(gameArea).display}`);
+            console.log(`Justify-content: ${getComputedStyle(gameArea).justifyContent}`);
+            console.log(`Align-items: ${getComputedStyle(gameArea).alignItems}`);
         }
         
         console.log('%cViewport:', 'color: #FF1493; font-weight: bold;');
@@ -66,7 +58,6 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         console.log(`Is mobile (<= 768px): ${window.innerWidth <= 768}`);
         
         console.groupEnd();
-        console.log("📏 --- FUNDI I MATJEVE ---");
     }
     
     // Run on page load
@@ -74,24 +65,6 @@ console.log("🚀 SKRIPTI FILLOI: debugGridMobile.js po ekzekutohet...");
         document.addEventListener('DOMContentLoaded', logGridDimensions);
     } else {
         logGridDimensions();
-    }
-    
-    // Re-run measurements after game starts (when container loses .hidden)
-    // Listen for .game-container visibility changes
-    const observer = new MutationObserver(() => {
-        const gc = document.querySelector('.game-container');
-        if (gc && !gc.classList.contains('hidden')) {
-            console.log('🔄 GAME STARTED - Re-running grid measurements...');
-            setTimeout(() => {
-                logGridDimensions();
-                window.debugGrid = logGridDimensions;
-            }, 100);
-        }
-    });
-    
-    const gameContainer = document.querySelector('.game-container');
-    if (gameContainer) {
-        observer.observe(gameContainer, { attributes: true, attributeFilter: ['class'] });
     }
     
     // Also expose a function to call from console
