@@ -125,14 +125,19 @@
 
         .game-grid {
             /* Ensure the grid is centered and matches the rounded square layer */
-            margin: auto; /* Center the grid */
+            margin: 0 auto; /* Center the grid */
             display: grid;
             grid-template-columns: repeat(10, var(--grid-cell-size));
             grid-template-rows: repeat(10, var(--grid-cell-size));
             gap: var(--grid-gap);
-            /* 🔄 RESPONSIVE: Use min() to adapt width to parent but keep ideal size */
-            width: min(var(--game-grid-total-size), calc(100% - 40px));
-            height: auto; /* Let height follow width to maintain square aspect ratio */
+            /* 🔄 RESPONSIVE FIX v2: 
+               - Use clamp to ensure grid never exceeds viewport
+               - Maintain square aspect ratio with aspect-ratio: 1
+               - Grid scales fluidly with viewport
+            */
+            width: clamp(200px, 80vw, 520px);
+            height: auto; /* Grid maintains square due to aspect-ratio */
+            aspect-ratio: 1 / 1; /* Keep grid always square (10x10) */
             max-width: 100%;
             max-height: 100%;
             padding: var(--game-grid-padding);
@@ -599,22 +604,25 @@ body .dragged-piece-clone .piece-grid {
     position: relative;
     inset: auto;
     width: 100%;
-    max-width: none;
+    max-width: 100%;
     min-height: var(--view-height);
     height: auto;
     margin: 0 auto;
-    padding: clamp(16px, 3vh, 32px) var(--game-shell-inline-gap) clamp(96px, 14vh, 140px) var(--game-shell-inline-gap);
+    /* 🔄 RESPONSIVE: Simple padding that doesn't overflow */
+    padding: clamp(16px, 3vh, 32px) clamp(16px, 3vw, 32px) clamp(96px, 14vh, 140px) clamp(16px, 3vw, 32px);
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: center;
     justify-content: flex-start;
     gap: var(--game-shell-block-gap); /* uniform vertical spacing between sections */
-    overflow: visible;
+    overflow-x: hidden;
+    overflow-y: visible;
     box-sizing: border-box;
 }
 
 .game-container > .game-area {
-    width: min(100%, calc(var(--game-grid-total-size) + 32px));
+    /* 🔄 RESPONSIVE FIX: Allow 100% width for fluid responsive grid */
+    width: 100%;
     max-width: 100%;
     margin: 0 auto;
 }
