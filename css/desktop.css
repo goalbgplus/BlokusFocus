@@ -11,9 +11,11 @@
     justify-content: center !important;
 }
 
-/* Ensure game-grid does not use viewport-sized adjustments on desktop */
+/* Ensure game-grid uses responsive sizing with clamp() */
 .game-grid {
-    max-width: calc(var(--grid-cell-size) * 10 + var(--grid-gap) * 9 + 30px);
+    /* ✅ RESPONSIVE: Already set in game-ui.css with clamp() */
+    /* width: clamp(300px, 90vw, 400px); */
+    /* height: clamp(300px, 90vw, 400px); */
 }
 
 /* Make dragged clone match desktop sizing */
