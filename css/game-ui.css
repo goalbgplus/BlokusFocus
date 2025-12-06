@@ -941,4 +941,9 @@ body[data-theme="dark"] .game-grid-container {
     animation-play-state: paused !important;
 }
 
+/* Mobile size sync intentionally removed from this file.
+   Mobile-specific overrides live in css/mobile.css only to avoid
+   affecting local dev where clamp() behavior is preferred. */
+
+
 
