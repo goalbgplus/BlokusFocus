@@ -512,58 +512,11 @@
         filter: blur(30px);
         width: clamp(100px, 32vw, 150px);
 
-/* =============================================== */
-/* GITHUB MOBILE FIX - enforce local mobile sizes     */
-/* Append this at the end so it wins over other rules */
-/* =============================================== */
-@media (max-width: 768px) {
-    /* Force the core layout variables to match local/dev */
-    :root {
-        --grid-cell-size: 28px !important;
-        --piece-block-size: 28px !important;
-        --grid-gap: 2px !important;
-        --game-grid-gap: 2px !important;
-        --glass-bg: transparent !important;
-        --glass-border: transparent !important;
-    }
-
-    /* Make pieces container fully transparent and small on mobile */
-    #piecesContainer.pieces-container {
-        background: transparent !important;
-        background-color: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-        backdrop-filter: none !important;
-        -webkit-backdrop-filter: none !important;
-        gap: 5px !important;
-        column-gap: 5px !important;
-        row-gap: 5px !important;
-        padding-left: 0.5vw !important;
-        padding-right: 0.5vw !important;
-        max-width: 98vw !important;
-        min-height: auto !important;
-        max-height: 120px !important;
-        justify-content: center !important;
-    }
-
-    /* Ensure generic class also receives small container sizing */
-    .pieces-container {
-        max-width: 98vw !important;
-        padding-left: 0.5vw !important;
-        padding-right: 0.5vw !important;
-        gap: 5px !important;
-    }
-
-    /* Slightly reduce piece visuals to match local appearance */
-    .piece, .piece-block {
-        transform: scale(0.95) !important;
-        margin: 0 !important;
-        width: calc(var(--piece-block-size) * 1) !important;
-        height: calc(var(--piece-block-size) * 1) !important;
-        min-width: calc(var(--piece-block-size) * 1) !important;
-        min-height: calc(var(--piece-block-size) * 1) !important;
-    }
-}
+/* Legacy emergency mobile override removed.
+   Reason: it forced global :root variables (e.g. --grid-cell-size) which
+   caused local/dev sizes to be overwritten and produced larger pieces.
+   Keep only targeted, minimal overrides below so mobile appearance follows
+   the responsive variables defined in `game-ui.css` (clamp()). */
 
         height: clamp(100px, 32vw, 150px);
     }
@@ -934,6 +887,21 @@
         border: none !important;
         backdrop-filter: none !important;
         -webkit-backdrop-filter: none !important;
+    }
+}
+
+/* Last-resort mobile size sync: force responsive piece sizes using clamp()
+   This avoids changing :root variables and ensures hosted site matches
+   local responsive behavior even if some files were compiled with fixed values. */
+@media (max-width: 768px) {
+    .piece,
+    .piece-block {
+        width: clamp(28px, 4vw, 40px) !important;
+        height: clamp(28px, 4vw, 40px) !important;
+        min-width: clamp(28px, 4vw, 40px) !important;
+        min-height: clamp(28px, 4vw, 40px) !important;
+        max-width: clamp(28px, 4vw, 40px) !important;
+        max-height: clamp(28px, 4vw, 40px) !important;
     }
 }
 
